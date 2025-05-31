@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Plus, Edit2, Trash2 } from "lucide-react";
+import { Icon } from "@/components/icon";
 import type { Category } from "@shared/schema";
 
 const formSchema = z.object({
@@ -82,6 +83,8 @@ const iconOptions = [
   { value: "tv", label: "TV" },
   { value: "tablet", label: "Tablet" },
   { value: "watch", label: "Watch" },
+  // Custom SVG icons
+  { value: "custom-example", label: "Custom Example" },
 ];
 
 export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
@@ -317,7 +320,7 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
                             style={{ backgroundColor: category.color }}
                           >
                             {category.icon && (
-                              <i className={`fas fa-${category.icon} text-white text-xs`} />
+                              <Icon name={category.icon} size={12} className="text-white" />
                             )}
                           </div>
                           <span className="font-medium">{category.name}</span>
