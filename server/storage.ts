@@ -46,6 +46,7 @@ export interface IStorage {
   createItem(item: InsertItem): Promise<Item>;
   updateItem(id: number, item: Partial<InsertItem>): Promise<Item | undefined>;
   deleteItem(id: number): Promise<boolean>;
+  getItemByPosition(containerId: number, position: { row: number; column: number }): Promise<Item | undefined>;
   searchItems(query: string, fields?: string[]): Promise<ItemSearchResult[]>;
 }
 
@@ -277,6 +278,20 @@ export class DatabaseStorage implements IStorage {
   async deleteItem(id: number): Promise<boolean> {
     const result = await db.delete(items).where(eq(items.id, id));
     return (result.rowCount || 0) > 0;
+  }
+
+  async getItemByPosition(containerId: number, position: { row: number; column: number }): Promise<Item | undefined> {
+    const [item] = await db
+      .select()
+      .from(items)
+      .where(
+        and(
+          eq(items.containerId, containerId),
+          sql`${items.position}->>'row' = ${position.row.toString()}`,
+          sql`${items.position}->>'column' = ${position.column.toString()}`
+        )
+      );
+    return item || undefined;
   }
 
   async searchItems(query: string, fields: string[] = ['name']): Promise<ItemSearchResult[]> {

@@ -258,24 +258,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
             cleanItem.categoryId = category.id;
           }
 
+          // Check if there's already an item at this position
+          const existingAtPosition = await storage.getItemByPosition(
+            cleanItem.containerId, 
+            cleanItem.position
+          );
+
           if (cleanItem.id) {
-            // Try to update existing item
+            // Try to update existing item by ID
             const existingItem = await storage.getItem(cleanItem.id);
             if (existingItem) {
               const { id, ...itemData } = cleanItem;
               await storage.updateItem(cleanItem.id, itemData);
               updated++;
             } else {
-              // Item with this ID doesn't exist, create new one
+              // Item with this ID doesn't exist, but check position conflict
+              if (existingAtPosition && existingAtPosition.id !== cleanItem.id) {
+                // Remove the item at this position first
+                await storage.deleteItem(existingAtPosition.id);
+              }
               const { id, ...itemData } = cleanItem;
               await storage.createItem(itemData);
               imported++;
             }
           } else {
-            // No ID provided, create new item
-            const { id, ...itemData } = cleanItem;
-            await storage.createItem(itemData);
-            imported++;
+            // No ID provided - check for position conflict
+            if (existingAtPosition) {
+              // Replace the existing item at this position
+              const { id, ...itemData } = cleanItem;
+              await storage.updateItem(existingAtPosition.id, itemData);
+              updated++;
+            } else {
+              // Create new item
+              const { id, ...itemData } = cleanItem;
+              await storage.createItem(itemData);
+              imported++;
+            }
           }
         } catch (error: any) {
           failed++;
