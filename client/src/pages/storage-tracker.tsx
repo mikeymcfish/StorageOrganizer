@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 import { StorageSidebar } from "@/components/storage-sidebar";
 import { StorageGrid } from "@/components/storage-grid";
 import { ItemModal } from "@/components/item-modal";
@@ -11,6 +12,10 @@ import { ContainerManagementModal } from "@/components/container-management-moda
 import type { StorageContainer, Item, Category } from "@shared/schema";
 
 export default function StorageTracker() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [selectedContainerId, setSelectedContainerId] = useState<number | null>(null);
   const [itemModalOpen, setItemModalOpen] = useState(false);
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
@@ -48,6 +53,77 @@ export default function StorageTracker() {
     setSelectedContainerId(containerId);
   };
 
+  const handleExport = async () => {
+    try {
+      const response = await fetch("/api/export");
+      if (!response.ok) throw new Error("Export failed");
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `storage-data-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Export successful",
+        description: "Your storage data has been exported.",
+      });
+    } catch (error) {
+      toast({
+        title: "Export failed",
+        description: "Failed to export data. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleImport = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      
+      const response = await fetch("/api/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) throw new Error("Import failed");
+
+      // Refresh all data
+      queryClient.invalidateQueries({ queryKey: ["/api/containers"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/size-options"] });
+      
+      toast({
+        title: "Import successful",
+        description: "Your storage data has been imported.",
+      });
+    } catch (error) {
+      toast({
+        title: "Import failed",
+        description: "Failed to import data. Please check the file format.",
+        variant: "destructive",
+      });
+    }
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleEditContainer = (container: StorageContainer) => {
     setEditingContainer(container);
     setContainerModalOpen(true);
@@ -69,6 +145,8 @@ export default function StorageTracker() {
         onManageSizes={() => setSizeModalOpen(true)}
         onSearch={() => setSearchModalOpen(true)}
         onManageContainers={() => setContainerManagementModalOpen(true)}
+        onExport={handleExport}
+        onImport={handleImport}
       />
       
       <div className="flex-1 flex flex-col">
@@ -126,6 +204,15 @@ export default function StorageTracker() {
         open={containerManagementModalOpen}
         onOpenChange={setContainerManagementModalOpen}
         onEditContainer={handleEditContainer}
+      />
+
+      {/* Hidden file input for import */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        style={{ display: "none" }}
+        onChange={handleFileSelect}
       />
     </div>
   );
