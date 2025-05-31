@@ -92,14 +92,6 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="search-value"
-                  checked={searchFields.includes("value")}
-                  onCheckedChange={(checked) => handleFieldChange("value", checked as boolean)}
-                />
-                <Label htmlFor="search-value" className="text-sm">Value</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
                   id="search-information"
                   checked={searchFields.includes("information")}
                   onCheckedChange={(checked) => handleFieldChange("information", checked as boolean)}

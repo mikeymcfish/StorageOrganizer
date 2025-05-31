@@ -151,7 +151,6 @@ export class DatabaseStorage implements IStorage {
     const result = await db.select({
       id: items.id,
       name: items.name,
-      value: items.value,
       categoryId: items.categoryId,
       size: items.size,
       quantity: items.quantity,
@@ -172,7 +171,6 @@ export class DatabaseStorage implements IStorage {
     return result.map(row => ({
       id: row.id,
       name: row.name,
-      value: row.value,
       categoryId: row.categoryId,
       size: row.size,
       quantity: row.quantity,
@@ -188,7 +186,6 @@ export class DatabaseStorage implements IStorage {
     const result = await db.select({
       id: items.id,
       name: items.name,
-      value: items.value,
       categoryId: items.categoryId,
       size: items.size,
       quantity: items.quantity,
@@ -210,7 +207,6 @@ export class DatabaseStorage implements IStorage {
     return result.map(row => ({
       id: row.id,
       name: row.name,
-      value: row.value,
       categoryId: row.categoryId,
       size: row.size,
       quantity: row.quantity,
@@ -226,7 +222,6 @@ export class DatabaseStorage implements IStorage {
     const result = await db.select({
       id: items.id,
       name: items.name,
-      value: items.value,
       categoryId: items.categoryId,
       size: items.size,
       quantity: items.quantity,
@@ -251,7 +246,6 @@ export class DatabaseStorage implements IStorage {
     return {
       id: row.id,
       name: row.name,
-      value: row.value,
       categoryId: row.categoryId,
       size: row.size,
       quantity: row.quantity,
@@ -286,22 +280,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async searchItems(query: string, fields: string[] = ['name']): Promise<ItemSearchResult[]> {
+    const lowerQuery = query.toLowerCase();
     const searchConditions = [];
     
     if (fields.includes('name')) {
-      searchConditions.push(like(items.name, `%${query}%`));
+      searchConditions.push(sql`LOWER(${items.name}) LIKE ${`%${lowerQuery}%`}`);
     }
     if (fields.includes('information')) {
-      searchConditions.push(and(isNotNull(items.information), like(items.information, `%${query}%`)));
-    }
-    if (fields.includes('value')) {
-      searchConditions.push(and(isNotNull(items.value), sql`CAST(${items.value} AS TEXT) LIKE '%' || ${query} || '%'`));
+      searchConditions.push(and(isNotNull(items.information), sql`LOWER(${items.information}) LIKE ${`%${lowerQuery}%`}`));
     }
     
     const result = await db.select({
       id: items.id,
       name: items.name,
-      value: items.value,
       categoryId: items.categoryId,
       size: items.size,
       quantity: items.quantity,
@@ -325,7 +316,6 @@ export class DatabaseStorage implements IStorage {
     return result.map(row => ({
       id: row.id,
       name: row.name,
-      value: row.value,
       categoryId: row.categoryId,
       size: row.size,
       quantity: row.quantity,
