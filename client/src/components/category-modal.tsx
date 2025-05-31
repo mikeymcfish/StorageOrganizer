@@ -3,16 +3,34 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Plus, Edit2, Trash2 } from "lucide-react";
+import { Plus, Edit2, Trash2, HelpCircle } from "lucide-react";
 import { Icon } from "@/components/icon";
 import type { Category } from "@shared/schema";
 
@@ -43,52 +61,13 @@ const colorOptions = [
 ];
 
 const iconOptions = [
-  { value: "paperclip", label: "Paperclip" },
-  { value: "usb", label: "USB" },
-  { value: "book", label: "Book" },
-  { value: "wrench", label: "Wrench" },
-  { value: "pen", label: "Pen" },
-  { value: "folder", label: "Folder" },
-  { value: "marker", label: "Marker" },
-  { value: "eraser", label: "Eraser" },
-  { value: "sticky-note", label: "Sticky Note" },
-  { value: "plug", label: "Plug" },
-  { value: "screwdriver", label: "Screwdriver" },
-  { value: "hammer", label: "Hammer" },
-  { value: "scissors", label: "Scissors" },
-  { value: "paint-brush", label: "Paint Brush" },
-  { value: "calculator", label: "Calculator" },
-  { value: "laptop", label: "Laptop" },
-  { value: "mobile", label: "Mobile" },
-  { value: "battery", label: "Battery" },
-  { value: "lightbulb", label: "Light Bulb" },
-  { value: "key", label: "Key" },
-  { value: "lock", label: "Lock" },
-  { value: "box", label: "Box" },
-  { value: "archive", label: "Archive" },
-  { value: "file", label: "File" },
-  { value: "clipboard", label: "Clipboard" },
-  { value: "camera", label: "Camera" },
-  { value: "headphones", label: "Headphones" },
-  { value: "microphone", label: "Microphone" },
-  { value: "speaker", label: "Speaker" },
-  { value: "keyboard", label: "Keyboard" },
-  { value: "mouse", label: "Mouse" },
-  { value: "printer", label: "Printer" },
-  { value: "wifi", label: "WiFi" },
-  { value: "hard-drive", label: "Hard Drive" },
-  { value: "memory", label: "Memory" },
-  { value: "cpu", label: "CPU" },
-  { value: "gamepad", label: "Gamepad" },
-  { value: "tv", label: "TV" },
-  { value: "tablet", label: "Tablet" },
-  { value: "watch", label: "Watch" },
   // Custom SVG icons
-  { value: "custom-example", label: "Custom Example" },
+  { value: "custom-crystal", label: "Crystal" },
 ];
 
 export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -123,7 +102,11 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
 
   const updateMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      const response = await apiRequest("PATCH", `/api/categories/${editingCategory!.id}`, data);
+      const response = await apiRequest(
+        "PATCH",
+        `/api/categories/${editingCategory!.id}`,
+        data,
+      );
       return response.json();
     },
     onSuccess: () => {
@@ -191,9 +174,12 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
             <h3 className="font-medium mb-4">
               {editingCategory ? "Edit Category" : "Add New Category"}
             </h3>
-            
+
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="name"
@@ -218,7 +204,10 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
                       <FormLabel>
                         Color <span className="text-red-500">*</span>
                       </FormLabel>
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue>
@@ -227,7 +216,11 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
                                   className="w-4 h-4 rounded"
                                   style={{ backgroundColor: field.value }}
                                 />
-                                {colorOptions.find(c => c.value === field.value)?.label}
+                                {
+                                  colorOptions.find(
+                                    (c) => c.value === field.value,
+                                  )?.label
+                                }
                               </div>
                             </SelectValue>
                           </SelectTrigger>
@@ -256,15 +249,33 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
                   name="icon"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Icon (Optional)</FormLabel>
-                      <Select value={field.value || ""} onValueChange={field.onChange}>
+                      <div className="flex items-center gap-2">
+                        <FormLabel>Icon (Optional)</FormLabel>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setShowHelp(true)}
+                          className="h-5 w-5 p-0"
+                        >
+                          <HelpCircle className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <Select
+                        value={field.value || ""}
+                        onValueChange={field.onChange}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select an icon">
                               {field.value && (
                                 <div className="flex items-center gap-2">
                                   <Icon name={field.value} size={16} />
-                                  {iconOptions.find(i => i.value === field.value)?.label}
+                                  {
+                                    iconOptions.find(
+                                      (i) => i.value === field.value,
+                                    )?.label
+                                  }
                                 </div>
                               )}
                             </SelectValue>
@@ -288,14 +299,20 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
 
                 <div className="flex gap-3 pt-4">
                   {editingCategory && (
-                    <Button type="button" variant="outline" onClick={handleCancel}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCancel}
+                    >
                       Cancel
                     </Button>
                   )}
                   <Button
                     type="submit"
                     className="flex-1 bg-blue-600 hover:bg-blue-700"
-                    disabled={createMutation.isPending || updateMutation.isPending}
+                    disabled={
+                      createMutation.isPending || updateMutation.isPending
+                    }
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     {editingCategory ? "Update" : "Add"} Category
@@ -320,7 +337,11 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
                             style={{ backgroundColor: category.color }}
                           >
                             {category.icon && (
-                              <Icon name={category.icon} size={12} className="text-white" />
+                              <Icon
+                                name={category.icon}
+                                size={12}
+                                className="text-white"
+                              />
                             )}
                           </div>
                           <span className="font-medium">{category.name}</span>
@@ -346,7 +367,7 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
                     </CardContent>
                   </Card>
                 ))}
-                
+
                 {categories.length === 0 && (
                   <div className="text-center py-8 text-slate-500">
                     <p>No categories yet</p>
@@ -358,6 +379,59 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
           </div>
         </div>
       </DialogContent>
+      
+      {/* Help Dialog */}
+      <Dialog open={showHelp} onOpenChange={setShowHelp}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Adding Custom SVG Icons</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 text-sm">
+            <div>
+              <h4 className="font-medium mb-2">Step 1: Add your SVG file</h4>
+              <p className="text-gray-600">
+                Place your SVG file in the <code className="bg-gray-100 px-1 rounded">client/src/assets/icons/</code> folder 
+                (e.g., <code className="bg-gray-100 px-1 rounded">my-icon.svg</code>)
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-medium mb-2">Step 2: Update the icon component</h4>
+              <p className="text-gray-600 mb-2">
+                Edit <code className="bg-gray-100 px-1 rounded">client/src/components/icon.tsx</code> and add your icon:
+              </p>
+              <pre className="bg-gray-100 p-3 rounded text-xs overflow-x-auto">
+{`const customIcons: Record<string, string> = {
+  "custom-example": "/src/assets/icons/example.svg",
+  "custom-my-icon": "/src/assets/icons/my-icon.svg", // Add this
+};`}
+              </pre>
+            </div>
+            
+            <div>
+              <h4 className="font-medium mb-2">Step 3: Add to selection list</h4>
+              <p className="text-gray-600 mb-2">
+                Edit <code className="bg-gray-100 px-1 rounded">client/src/components/category-modal.tsx</code> and add to iconOptions:
+              </p>
+              <pre className="bg-gray-100 p-3 rounded text-xs overflow-x-auto">
+{`{ value: "custom-my-icon", label: "My Custom Icon" },`}
+              </pre>
+            </div>
+            
+            <div className="border-t pt-3">
+              <p className="text-xs text-gray-500">
+                Custom icons must start with "custom-" and will automatically inherit colors and sizing.
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex justify-end">
+            <Button onClick={() => setShowHelp(false)} variant="outline">
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }

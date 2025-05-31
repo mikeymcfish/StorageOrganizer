@@ -96,11 +96,13 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
                             )}
                           </div>
                           {item.category?.icon && (
-                            <Icon 
-                              name={item.category.icon}
-                              size={20}
-                              className="absolute right-2 bottom-2 text-white text-opacity-20"
-                            />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-50">
+                              <Icon 
+                                name={item.category.icon}
+                                size={48}
+                                className="text-white"
+                              />
+                            </div>
                           )}
                         </div>
                       );
