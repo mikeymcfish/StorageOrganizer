@@ -48,13 +48,6 @@ export const items = pgTable("items", {
 // Insert schemas
 export const insertStorageContainerSchema = createInsertSchema(storageContainers).omit({
   id: true,
-}).extend({
-  gridConfig: z.object({
-    rows: z.array(z.object({
-      columns: z.number(),
-      isDivider: z.boolean().optional(),
-    })),
-  }),
 });
 
 export const insertCategorySchema = createInsertSchema(categories).omit({
@@ -67,23 +60,10 @@ export const insertSizeOptionSchema = createInsertSchema(sizeOptions).omit({
 
 export const insertItemSchema = createInsertSchema(items).omit({
   id: true,
-}).extend({
-  position: z.object({
-    row: z.number(),
-    column: z.number(),
-  }),
 });
 
-// Types with proper JSON parsing
-export type StorageContainer = {
-  id: number;
-  name: string;
-  description: string | null;
-  gridConfig: {
-    rows: Array<{ columns: number; isDivider?: boolean }>;
-  };
-};
-
+// Types
+export type StorageContainer = typeof storageContainers.$inferSelect;
 export type InsertStorageContainer = z.infer<typeof insertStorageContainerSchema>;
 
 export type Category = typeof categories.$inferSelect;
@@ -92,22 +72,7 @@ export type InsertCategory = z.infer<typeof insertCategorySchema>;
 export type SizeOption = typeof sizeOptions.$inferSelect;
 export type InsertSizeOption = z.infer<typeof insertSizeOptionSchema>;
 
-export type Item = {
-  id: number;
-  name: string;
-  value: number | null;
-  categoryId: number | null;
-  size: string | null;
-  quantity: number | null;
-  information: string | null;
-  photo: string | null;
-  containerId: number;
-  position: {
-    row: number;
-    column: number;
-  };
-};
-
+export type Item = typeof items.$inferSelect;
 export type InsertItem = z.infer<typeof insertItemSchema>;
 
 // Extended types for joins
