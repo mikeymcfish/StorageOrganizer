@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Search, X } from "lucide-react";
 import { Icon } from "@/components/icon";
 import type { ItemSearchResult } from "@shared/schema";
@@ -17,6 +19,7 @@ interface SearchModalProps {
 
 export function SearchModal({ open, onOpenChange }: SearchModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchFields, setSearchFields] = useState<string[]>(["name"]);
 
   const { data: searchResults = [], isLoading } = useQuery<ItemSearchResult[]>({
     queryKey: ["/api/search", searchQuery],
