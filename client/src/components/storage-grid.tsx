@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Settings, Plus } from "lucide-react";
 import type { StorageContainer, ItemWithCategory } from "@shared/schema";
+import { Icon } from "@/components/icon";
 
 interface StorageGridProps {
   container: StorageContainer;
@@ -95,8 +96,10 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
                             )}
                           </div>
                           {item.category?.icon && (
-                            <i 
-                              className={`fas fa-${item.category.icon} absolute right-2 bottom-2 text-white text-opacity-20 text-xl`}
+                            <Icon 
+                              name={item.category.icon}
+                              size={20}
+                              className="absolute right-2 bottom-2 text-white text-opacity-20"
                             />
                           )}
                         </div>

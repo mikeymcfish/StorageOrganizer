@@ -263,7 +263,7 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
                             <SelectValue placeholder="Select an icon">
                               {field.value && (
                                 <div className="flex items-center gap-2">
-                                  <i className={`fas fa-${field.value}`} />
+                                  <Icon name={field.value} size={16} />
                                   {iconOptions.find(i => i.value === field.value)?.label}
                                 </div>
                               )}
@@ -274,7 +274,7 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
                           {iconOptions.map((icon) => (
                             <SelectItem key={icon.value} value={icon.value}>
                               <div className="flex items-center gap-2">
-                                <i className={`fas fa-${icon.value}`} />
+                                <Icon name={icon.value} size={16} />
                                 {icon.label}
                               </div>
                             </SelectItem>
