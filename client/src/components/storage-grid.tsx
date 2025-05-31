@@ -12,6 +12,7 @@ interface StorageGridProps {
 export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridProps) {
   const { data: items = [] } = useQuery<ItemWithCategory[]>({
     queryKey: ["/api/containers", container.id, "items"],
+    queryFn: () => fetch(`/api/containers/${container.id}/items`).then(res => res.json()),
   });
 
   const getItemAtPosition = (row: number, column: number) => {
@@ -65,10 +66,9 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
             }
 
             return (
-              <div key={`row-${rowIndex}`} className="mb-4">
-                <div className="text-xs text-slate-500 mb-2">Row {rowIndex + 1}</div>
+              <div key={`row-${rowIndex}`} className="mb-2">
                 <div 
-                  className="grid gap-3"
+                  className="grid gap-2"
                   style={{ 
                     gridTemplateColumns: `repeat(${rowConfig.columns}, minmax(0, 1fr))` 
                   }}
@@ -80,7 +80,7 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
                       return (
                         <div
                           key={`${rowIndex}-${columnIndex}`}
-                          className="storage-box p-4 rounded-lg cursor-pointer relative min-h-[120px] flex flex-col justify-between transform transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                          className="storage-box p-3 rounded-lg cursor-pointer relative min-h-[80px] flex flex-col justify-between transform transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                           style={{ backgroundColor: item.category?.color || "#64748b" }}
                           onClick={() => onEditItem(item)}
                         >
@@ -106,7 +106,7 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
                     return (
                       <div
                         key={`${rowIndex}-${columnIndex}`}
-                        className="border-2 border-dashed border-slate-300 p-4 rounded-lg cursor-pointer relative min-h-[120px] flex items-center justify-center hover:border-blue-600 hover:bg-blue-50 transition-all duration-200"
+                        className="border-2 border-dashed border-slate-300 p-3 rounded-lg cursor-pointer relative min-h-[80px] flex items-center justify-center hover:border-blue-600 hover:bg-blue-50 transition-all duration-200"
                         onClick={() => onAddItem(rowIndex, columnIndex)}
                       >
                         <div className="text-center">
