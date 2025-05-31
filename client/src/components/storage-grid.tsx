@@ -45,12 +45,7 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
               {container.description || `${container.gridConfig.rows.length} rows with custom layout`}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" className="text-slate-600 hover:text-slate-900">
-              <Settings className="w-4 h-4 mr-2" />
-              Configure Grid
-            </Button>
-          </div>
+
         </div>
       </div>
 
