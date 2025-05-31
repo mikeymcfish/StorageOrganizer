@@ -234,44 +234,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Import data
+  // Import data (items only)
   app.post("/api/import", async (req, res) => {
     try {
-      const { containers, categories, sizeOptions, items } = req.body;
+      const { items } = req.body;
 
-      // Import categories first (they're referenced by items)
-      if (categories) {
-        for (const category of categories) {
-          const { id, ...categoryData } = category;
-          await storage.createCategory(categoryData);
+      if (!items || !Array.isArray(items)) {
+        return res.status(400).json({ 
+          error: "Invalid data format. Expected 'items' array." 
+        });
+      }
+
+      let imported = 0;
+      let updated = 0;
+      let failed = 0;
+      const errors: string[] = [];
+
+      for (const item of items) {
+        try {
+          // Clean up the item data - remove category object, keep only categoryId
+          const { category, ...cleanItem } = item;
+          if (category && !cleanItem.categoryId) {
+            cleanItem.categoryId = category.id;
+          }
+
+          if (cleanItem.id) {
+            // Try to update existing item
+            const existingItem = await storage.getItem(cleanItem.id);
+            if (existingItem) {
+              await storage.updateItem(cleanItem.id, cleanItem);
+              updated++;
+            } else {
+              // Item with this ID doesn't exist, create new one
+              const { id, ...itemData } = cleanItem;
+              await storage.createItem(itemData);
+              imported++;
+            }
+          } else {
+            // No ID provided, create new item
+            const { id, ...itemData } = cleanItem;
+            await storage.createItem(itemData);
+            imported++;
+          }
+        } catch (error: any) {
+          failed++;
+          const itemName = item.name || `Item at position ${item.position?.row || '?'}, ${item.position?.column || '?'}`;
+          errors.push(`${itemName}: ${error.message || 'Unknown error'}`);
         }
       }
 
-      // Import size options
-      if (sizeOptions) {
-        for (const sizeOption of sizeOptions) {
-          const { id, ...sizeData } = sizeOption;
-          await storage.createSizeOption(sizeData);
-        }
-      }
-
-      // Import containers
-      if (containers) {
-        for (const container of containers) {
-          const { id, ...containerData } = container;
-          await storage.createStorageContainer(containerData);
-        }
-      }
-
-      // Import items last (they reference containers and categories)
-      if (items) {
-        for (const item of items) {
-          const { id, ...itemData } = item;
-          await storage.createItem(itemData);
-        }
-      }
-
-      res.json({ success: true, message: "Data imported successfully" });
+      res.json({ 
+        success: true, 
+        summary: {
+          imported,
+          updated,
+          failed,
+          total: items.length
+        },
+        errors: errors.length > 0 ? errors : undefined
+      });
     } catch (error) {
       console.error("Import error:", error);
       res.status(500).json({ error: "Failed to import data" });

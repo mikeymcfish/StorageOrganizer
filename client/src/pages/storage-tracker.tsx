@@ -99,21 +99,41 @@ export default function StorageTracker() {
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) throw new Error("Import failed");
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Import failed");
+      }
 
       // Refresh all data
       queryClient.invalidateQueries({ queryKey: ["/api/containers"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/size-options"] });
+      
+      const { summary, errors } = result;
+      let description = `Imported: ${summary.imported}, Updated: ${summary.updated}`;
+      if (summary.failed > 0) {
+        description += `, Failed: ${summary.failed}`;
+      }
       
       toast({
-        title: "Import successful",
-        description: "Your storage data has been imported.",
+        title: "Import completed",
+        description,
+        variant: summary.failed > 0 ? "destructive" : "default",
       });
-    } catch (error) {
+
+      // Show detailed errors if any
+      if (errors && errors.length > 0) {
+        setTimeout(() => {
+          toast({
+            title: "Import errors",
+            description: errors.slice(0, 3).join(", ") + (errors.length > 3 ? "..." : ""),
+            variant: "destructive",
+          });
+        }, 1000);
+      }
+    } catch (error: any) {
       toast({
         title: "Import failed",
-        description: "Failed to import data. Please check the file format.",
+        description: error.message || "Failed to import data. Please check the file format.",
         variant: "destructive",
       });
     }

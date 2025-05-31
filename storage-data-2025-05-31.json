@@ -1,0 +1,131 @@
+{
+  "version": "1.0",
+  "exportDate": "2025-05-31T16:44:39.965Z",
+  "containers": [
+    {
+      "id": 1,
+      "name": "Case 1",
+      "description": null,
+      "gridConfig": {
+        "rows": [
+          { "columns": 12 },
+          { "columns": 6 },
+          { "columns": 0, "isDivider": true },
+          { "columns": 6 }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "name": "fgdhfg",
+      "description": null,
+      "gridConfig": {
+        "rows": [
+          { "columns": 7 },
+          { "columns": 5 },
+          { "columns": 0, "isDivider": true }
+        ]
+      }
+    }
+  ],
+  "categories": [
+    { "id": 2, "name": "Electronics", "color": "#10b981", "icon": "usb" },
+    { "id": 3, "name": "Tools", "color": "#f59e0b", "icon": "wrench" },
+    { "id": 4, "name": "Books", "color": "#8b5cf6", "icon": "book" },
+    { "id": 5, "name": "Stationery", "color": "#ef4444", "icon": "pen" },
+    { "id": 6, "name": "Crystal", "color": "#64748b", "icon": "custom-crystal" }
+  ],
+  "sizeOptions": [
+    { "id": 1, "name": "xs", "label": "Extra Small", "sortOrder": 1 },
+    { "id": 2, "name": "sm", "label": "Small", "sortOrder": 2 },
+    { "id": 3, "name": "md", "label": "Medium", "sortOrder": 3 },
+    { "id": 4, "name": "lg", "label": "Large", "sortOrder": 4 },
+    { "id": 5, "name": "xl", "label": "Extra Large", "sortOrder": 5 }
+  ],
+  "items": [
+    {
+      "id": 1,
+      "name": "S",
+      "categoryId": 6,
+      "size": "md",
+      "quantity": 1,
+      "information": null,
+      "photo": null,
+      "containerId": 1,
+      "position": { "row": 0, "column": 3 },
+      "category": {
+        "id": 6,
+        "name": "Crystal",
+        "color": "#64748b",
+        "icon": "custom-crystal"
+      }
+    },
+    {
+      "id": 5,
+      "name": "S DD",
+      "categoryId": null,
+      "size": null,
+      "quantity": 1,
+      "information": null,
+      "photo": null,
+      "containerId": 4,
+      "position": { "row": 1, "column": 3 }
+    },
+    {
+      "id": 6,
+      "name": "S DD",
+      "categoryId": null,
+      "size": "sm",
+      "quantity": 1,
+      "information": null,
+      "photo": null,
+      "containerId": 4,
+      "position": { "row": 1, "column": 2 }
+    },
+    {
+      "id": 7,
+      "name": "20 ohm",
+      "categoryId": null,
+      "size": null,
+      "quantity": 1,
+      "information": null,
+      "photo": null,
+      "containerId": 4,
+      "position": { "row": 1, "column": 1 }
+    },
+    {
+      "id": 8,
+      "name": "br",
+      "categoryId": 5,
+      "size": null,
+      "quantity": 1,
+      "information": "wed",
+      "photo": null,
+      "containerId": 4,
+      "position": { "row": 0, "column": 3 },
+      "category": {
+        "id": 5,
+        "name": "Stationery",
+        "color": "#ef4444",
+        "icon": "pen"
+      }
+    },
+    {
+      "id": 9,
+      "name": "import test",
+      "categoryId": 5,
+      "size": "sm",
+      "quantity": 1,
+      "information": "this is a test of import",
+      "photo": null,
+      "containerId": 4,
+      "position": { "row": 1, "column": 1 },
+      "category": {
+        "id": 5,
+        "name": "Stationery",
+        "color": "#ef4444",
+        "icon": "pen"
+      }
+    }
+  ]
+}
