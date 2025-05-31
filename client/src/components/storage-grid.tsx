@@ -81,16 +81,16 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
                       return (
                         <div
                           key={`${rowIndex}-${columnIndex}`}
-                          className="storage-box p-3 rounded-lg cursor-pointer relative min-h-[80px] flex flex-col justify-between transform transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                          className="storage-box p-1 rounded-lg cursor-pointer relative min-h-[80px] transform transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                           style={{ backgroundColor: item.category?.color || "#64748b" }}
                           onClick={() => onEditItem(item)}
                         >
-                          <div>
-                            <h4 className="font-medium text-white text-sm mb-1 line-clamp-2">
+                          <div className="absolute top-1 left-1">
+                            <h4 className="font-medium text-white text-xs mb-0 line-clamp-2 leading-tight">
                               {item.name}
                             </h4>
                             {item.size && (
-                              <p className="text-white text-opacity-80 text-xs">
+                              <p className="text-white text-opacity-80 text-xs leading-none">
                                 {getSizeDisplay(item.size)}
                               </p>
                             )}
