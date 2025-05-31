@@ -33,7 +33,6 @@ export const sizeOptions = pgTable("size_options", {
 export const items = pgTable("items", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  value: real("value"),
   categoryId: integer("category_id").references(() => categories.id),
   size: text("size"),
   quantity: integer("quantity").default(1),
