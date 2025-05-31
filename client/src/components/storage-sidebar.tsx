@@ -13,6 +13,8 @@ interface StorageSidebarProps {
   onAddContainer: () => void;
   onManageCategories: () => void;
   onManageSizes: () => void;
+  onSearch: () => void;
+  onManageContainers: () => void;
 }
 
 export function StorageSidebar({
@@ -22,6 +24,8 @@ export function StorageSidebar({
   onAddContainer,
   onManageCategories,
   onManageSizes,
+  onSearch,
+  onManageContainers,
 }: StorageSidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);

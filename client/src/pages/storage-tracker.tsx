@@ -6,6 +6,8 @@ import { ItemModal } from "@/components/item-modal";
 import { CategoryModal } from "@/components/category-modal";
 import { ContainerModal } from "@/components/container-modal";
 import { SizeModal } from "@/components/size-modal";
+import { SearchModal } from "@/components/search-modal";
+import { ContainerManagementModal } from "@/components/container-management-modal";
 import type { StorageContainer, Item, Category } from "@shared/schema";
 
 export default function StorageTracker() {
@@ -14,8 +16,11 @@ export default function StorageTracker() {
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [sizeModalOpen, setSizeModalOpen] = useState(false);
   const [containerModalOpen, setContainerModalOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [containerManagementModalOpen, setContainerManagementModalOpen] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState<{ row: number; column: number } | null>(null);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
+  const [editingContainer, setEditingContainer] = useState<StorageContainer | null>(null);
 
   const { data: containers = [] } = useQuery<StorageContainer[]>({
     queryKey: ["/api/containers"],
