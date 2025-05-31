@@ -22,14 +22,26 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
   const [searchFields, setSearchFields] = useState<string[]>(["name"]);
 
   const { data: searchResults = [], isLoading } = useQuery<ItemSearchResult[]>({
-    queryKey: ["/api/search", searchQuery],
+    queryKey: ["/api/search", { q: searchQuery, fields: searchFields.join(',') }],
     enabled: searchQuery.length > 0,
     queryFn: async () => {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`);
+      const params = new URLSearchParams({
+        q: searchQuery,
+        fields: searchFields.join(',')
+      });
+      const response = await fetch(`/api/search?${params}`);
       if (!response.ok) throw new Error("Search failed");
       return response.json();
     },
   });
+
+  const handleFieldChange = (field: string, checked: boolean) => {
+    if (checked) {
+      setSearchFields([...searchFields, field]);
+    } else {
+      setSearchFields(searchFields.filter(f => f !== field));
+    }
+  };
 
   const handleClose = () => {
     setSearchQuery("");
@@ -48,7 +60,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search items by name or information..."
+              placeholder="Search items..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -64,6 +76,37 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                 <X className="h-4 w-4" />
               </Button>
             )}
+          </div>
+
+          {/* Search Field Options */}
+          <div className="border rounded-lg p-3">
+            <Label className="text-sm font-medium mb-2 block">Search in:</Label>
+            <div className="flex flex-wrap gap-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="search-name"
+                  checked={searchFields.includes("name")}
+                  onCheckedChange={(checked) => handleFieldChange("name", checked as boolean)}
+                />
+                <Label htmlFor="search-name" className="text-sm">Name</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="search-value"
+                  checked={searchFields.includes("value")}
+                  onCheckedChange={(checked) => handleFieldChange("value", checked as boolean)}
+                />
+                <Label htmlFor="search-value" className="text-sm">Value</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="search-information"
+                  checked={searchFields.includes("information")}
+                  onCheckedChange={(checked) => handleFieldChange("information", checked as boolean)}
+                />
+                <Label htmlFor="search-information" className="text-sm">Information</Label>
+              </div>
+            </div>
           </div>
 
           {/* Search Results */}
