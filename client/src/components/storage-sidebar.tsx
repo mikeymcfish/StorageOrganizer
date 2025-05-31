@@ -60,8 +60,6 @@ export function StorageSidebar({
         </div>
       </div>
 
-
-
       {/* Storage Container List */}
       <ScrollArea className="flex-1">
         <div className="p-4">
