@@ -48,6 +48,16 @@ export default function StorageTracker() {
     setSelectedContainerId(containerId);
   };
 
+  const handleEditContainer = (container: StorageContainer) => {
+    setEditingContainer(container);
+    setContainerModalOpen(true);
+  };
+
+  const handleContainerModalClose = () => {
+    setContainerModalOpen(false);
+    setEditingContainer(null);
+  };
+
   return (
     <div className="flex h-screen bg-slate-50">
       <StorageSidebar
@@ -57,6 +67,8 @@ export default function StorageTracker() {
         onAddContainer={() => setContainerModalOpen(true)}
         onManageCategories={() => setCategoryModalOpen(true)}
         onManageSizes={() => setSizeModalOpen(true)}
+        onSearch={() => setSearchModalOpen(true)}
+        onManageContainers={() => setContainerManagementModalOpen(true)}
       />
       
       <div className="flex-1 flex flex-col">
@@ -101,7 +113,19 @@ export default function StorageTracker() {
 
       <ContainerModal
         open={containerModalOpen}
-        onOpenChange={setContainerModalOpen}
+        onOpenChange={handleContainerModalClose}
+        editingContainer={editingContainer}
+      />
+
+      <SearchModal
+        open={searchModalOpen}
+        onOpenChange={setSearchModalOpen}
+      />
+
+      <ContainerManagementModal
+        open={containerManagementModalOpen}
+        onOpenChange={setContainerManagementModalOpen}
+        onEditContainer={handleEditContainer}
       />
     </div>
   );

@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Plus, Trash2 } from "lucide-react";
+import type { StorageContainer } from "@shared/schema";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -23,6 +24,7 @@ type FormData = z.infer<typeof formSchema>;
 interface ContainerModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  editingContainer?: StorageContainer | null;
 }
 
 type GridRow = {
