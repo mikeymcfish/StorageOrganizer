@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import type { Category, Item } from "@shared/schema";
+import type { Category, Item, SizeOption } from "@shared/schema";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -43,6 +43,10 @@ export function ItemModal({
 }: ItemModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const { data: sizeOptions = [] } = useQuery<SizeOption[]>({
+    queryKey: ["/api/size-options"],
+  });
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -246,11 +250,11 @@ export function ItemModal({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="xs">Extra Small</SelectItem>
-                      <SelectItem value="s">Small</SelectItem>
-                      <SelectItem value="m">Medium</SelectItem>
-                      <SelectItem value="l">Large</SelectItem>
-                      <SelectItem value="xl">Extra Large</SelectItem>
+                      {sizeOptions.map((size) => (
+                        <SelectItem key={size.id} value={size.name}>
+                          {size.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />

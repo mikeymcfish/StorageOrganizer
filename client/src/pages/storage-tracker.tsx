@@ -5,6 +5,7 @@ import { StorageGrid } from "@/components/storage-grid";
 import { ItemModal } from "@/components/item-modal";
 import { CategoryModal } from "@/components/category-modal";
 import { ContainerModal } from "@/components/container-modal";
+import { SizeModal } from "@/components/size-modal";
 import type { StorageContainer, Item, Category } from "@shared/schema";
 
 export default function StorageTracker() {

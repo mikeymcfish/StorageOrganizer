@@ -201,6 +201,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Size Options
+  app.get("/api/size-options", async (req, res) => {
+    try {
+      const sizeOptions = await storage.getSizeOptions();
+      res.json(sizeOptions);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch size options" });
+    }
+  });
+
+  app.post("/api/size-options", async (req, res) => {
+    try {
+      const validatedData = insertSizeOptionSchema.parse(req.body);
+      const sizeOption = await storage.createSizeOption(validatedData);
+      res.status(201).json(sizeOption);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create size option" });
+    }
+  });
+
+  app.patch("/api/size-options/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertSizeOptionSchema.partial().parse(req.body);
+      const sizeOption = await storage.updateSizeOption(id, validatedData);
+      if (!sizeOption) {
+        return res.status(404).json({ message: "Size option not found" });
+      }
+      res.json(sizeOption);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update size option" });
+    }
+  });
+
+  app.delete("/api/size-options/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteSizeOption(id);
+      if (!success) {
+        return res.status(404).json({ message: "Size option not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete size option" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

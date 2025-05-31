@@ -170,7 +170,7 @@ export class MemStorage implements IStorage {
 
   // Size Options
   async getSizeOptions(): Promise<SizeOption[]> {
-    return Array.from(this.sizeOptions.values()).sort((a, b) => a.sortOrder - b.sortOrder);
+    return Array.from(this.sizeOptions.values()).sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
   }
 
   async getSizeOption(id: number): Promise<SizeOption | undefined> {

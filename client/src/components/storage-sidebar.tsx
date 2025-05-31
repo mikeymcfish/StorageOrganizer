@@ -12,6 +12,7 @@ interface StorageSidebarProps {
   onContainerSelect: (id: number) => void;
   onAddContainer: () => void;
   onManageCategories: () => void;
+  onManageSizes: () => void;
 }
 
 export function StorageSidebar({
@@ -20,6 +21,7 @@ export function StorageSidebar({
   onContainerSelect,
   onAddContainer,
   onManageCategories,
+  onManageSizes,
 }: StorageSidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -143,8 +145,8 @@ export function StorageSidebar({
         </div>
       </ScrollArea>
 
-      {/* Category Management */}
-      <div className="p-4 border-t border-slate-200">
+      {/* Settings */}
+      <div className="p-4 border-t border-slate-200 space-y-2">
         <Button
           variant="ghost"
           onClick={onManageCategories}
@@ -152,6 +154,14 @@ export function StorageSidebar({
         >
           <Settings className="w-4 h-4 mr-2" />
           Manage Categories
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={onManageSizes}
+          className="w-full justify-start text-slate-600 hover:text-slate-900"
+        >
+          <Settings className="w-4 h-4 mr-2" />
+          Manage Sizes
         </Button>
       </div>
     </div>
