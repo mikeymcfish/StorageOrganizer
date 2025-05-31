@@ -306,6 +306,7 @@ export class DatabaseStorage implements IStorage {
     .leftJoin(storageContainers, eq(items.containerId, storageContainers.id))
     .where(or(
       like(items.name, `%${query}%`),
+      like(items.value, `%${query}%`),
       like(items.information, `%${query}%`)
     ));
 

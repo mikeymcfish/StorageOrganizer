@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,18 +32,36 @@ type GridRow = {
   isDivider?: boolean;
 };
 
-export function ContainerModal({ open, onOpenChange }: ContainerModalProps) {
+export function ContainerModal({ open, onOpenChange, editingContainer }: ContainerModalProps) {
   const [gridRows, setGridRows] = useState<GridRow[]>([{ columns: 5 }]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const isEditing = !!editingContainer;
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: editingContainer?.name || "",
+      description: editingContainer?.description || "",
     },
   });
+
+  // Update form and grid when editing container changes
+  useEffect(() => {
+    if (editingContainer) {
+      form.reset({
+        name: editingContainer.name,
+        description: editingContainer.description || "",
+      });
+      setGridRows(editingContainer.gridConfig.rows);
+    } else {
+      form.reset({
+        name: "",
+        description: "",
+      });
+      setGridRows([{ columns: 5 }]);
+    }
+  }, [editingContainer, form]);
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -62,6 +80,23 @@ export function ContainerModal({ open, onOpenChange }: ContainerModalProps) {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest("PATCH", `/api/containers/${editingContainer!.id}`, data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/containers"] });
+      toast({ title: "Storage container updated successfully" });
+      form.reset();
+      setGridRows([{ columns: 5 }]);
+      onOpenChange(false);
+    },
+    onError: () => {
+      toast({ title: "Failed to update container", variant: "destructive" });
+    },
+  });
+
   const onSubmit = (data: FormData) => {
     const containerData = {
       ...data,
@@ -71,7 +106,11 @@ export function ContainerModal({ open, onOpenChange }: ContainerModalProps) {
       },
     };
 
-    createMutation.mutate(containerData);
+    if (isEditing) {
+      updateMutation.mutate(containerData);
+    } else {
+      createMutation.mutate(containerData);
+    }
   };
 
   const addRow = (columns: number) => {
@@ -96,7 +135,7 @@ export function ContainerModal({ open, onOpenChange }: ContainerModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add Storage Container</DialogTitle>
+          <DialogTitle>{isEditing ? "Edit Storage Container" : "Add Storage Container"}</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
