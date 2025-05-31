@@ -52,7 +52,7 @@ export function Icon({ name, size = 16, className, ...props }: IconProps) {
           width={size}
           height={size}
           style={{ 
-            filter: "brightness(0) saturate(100%) blur(0.5px)", 
+            filter: "brightness(0) saturate(100%) invert(1) blur(0.5px)", 
             opacity: 0.5 
           }}
         />
