@@ -142,7 +142,6 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                             
                             <div className="text-sm text-gray-600 space-y-1">
                               <p><strong>Container:</strong> {item.containerName}</p>
-                              {item.value && <p><strong>Value:</strong> ${item.value}</p>}
                               {item.size && <p><strong>Size:</strong> {item.size}</p>}
                               {item.quantity && <p><strong>Quantity:</strong> {item.quantity}</p>}
                               {item.information && (

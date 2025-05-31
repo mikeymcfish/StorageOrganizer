@@ -15,7 +15,6 @@ import type { Category, Item, SizeOption } from "@shared/schema";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  value: z.number().optional(),
   categoryId: z.number().optional(),
   size: z.string().optional(),
   quantity: z.number().min(1).default(1),
@@ -52,7 +51,6 @@ export function ItemModal({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      value: undefined,
       categoryId: undefined,
       size: "",
       quantity: 1,
@@ -64,7 +62,6 @@ export function ItemModal({
     if (editingItem) {
       form.reset({
         name: editingItem.name,
-        value: editingItem.value || undefined,
         categoryId: editingItem.categoryId || undefined,
         size: editingItem.size || "",
         quantity: editingItem.quantity || 1,
@@ -73,7 +70,6 @@ export function ItemModal({
     } else {
       form.reset({
         name: "",
-        value: undefined,
         categoryId: undefined,
         size: "",
         quantity: 1,
@@ -136,7 +132,6 @@ export function ItemModal({
       ...data,
       containerId,
       position,
-      value: data.value || null,
       categoryId: data.categoryId || null,
       size: data.size || null,
       information: data.information || null,
@@ -176,27 +171,6 @@ export function ItemModal({
                   </FormLabel>
                   <FormControl>
                     <Input placeholder="Enter item name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="value"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Value</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="0.00"
-                      {...field}
-                      value={field.value || ""}
-                      onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
