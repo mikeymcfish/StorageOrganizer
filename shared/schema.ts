@@ -1,4 +1,5 @@
 import { pgTable, text, serial, integer, real, json } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -83,3 +84,31 @@ export type ItemWithCategory = Item & {
 export type ItemSearchResult = ItemWithCategory & {
   containerName: string;
 };
+
+// Relations
+export const storageContainersRelations = relations(storageContainers, ({ many }) => ({
+  items: many(items),
+}));
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  items: many(items),
+}));
+
+export const sizeOptionsRelations = relations(sizeOptions, ({ many }) => ({
+  items: many(items),
+}));
+
+export const itemsRelations = relations(items, ({ one }) => ({
+  container: one(storageContainers, {
+    fields: [items.containerId],
+    references: [storageContainers.id],
+  }),
+  category: one(categories, {
+    fields: [items.categoryId],
+    references: [categories.id],
+  }),
+  sizeOption: one(sizeOptions, {
+    fields: [items.size],
+    references: [sizeOptions.name],
+  }),
+}));
