@@ -1,4 +1,18 @@
 import { HTMLAttributes } from "react";
+import crystalIcon from "@assets/icons/crystal.svg";
+import capacitorIcon from "@assets/icons/capacitor.svg";
+import connectorIcon from "@assets/icons/connector.svg";
+import diodeIcon from "@assets/icons/diode.svg";
+import icIcon from "@assets/icons/ic.svg";
+import inductorIcon from "@assets/icons/inductor.svg";
+import ledIcon from "@assets/icons/led.svg";
+import resistorIcon from "@assets/icons/resistor.svg";
+import resistorVarIcon from "@assets/icons/resistor_var.svg";
+import sensorIcon from "@assets/icons/sensor.svg";
+import speakerIcon from "@assets/icons/speaker.svg";
+import switchIcon from "@assets/icons/switch.svg";
+import transistorIcon from "@assets/icons/transistor.svg";
+import otherIcon from "@assets/icons/other.svg";
 
 interface IconProps extends HTMLAttributes<HTMLDivElement> {
   name: string;
@@ -7,20 +21,20 @@ interface IconProps extends HTMLAttributes<HTMLDivElement> {
 
 // Custom SVG icons mapping
 const customIcons: Record<string, string> = {
-  "custom-crystal": "/src/assets/icons/crystal.svg",
-  "custom-capacitor": "/src/assets/icons/capacitor.svg",
-  "custom-connector": "/src/assets/icons/connector.svg",
-  "custom-diode": "/src/assets/icons/diode.svg",
-  "custom-ic": "/src/assets/icons/ic.svg",
-  "custom-inductor": "/src/assets/icons/inductor.svg",
-  "custom-led": "/src/assets/icons/led.svg",
-  "custom-resistor": "/src/assets/icons/resistor.svg",
-  "custom-resistor_var": "/src/assets/icons/resistor_var.svg",
-  "custom-sensor": "/src/assets/icons/sensor.svg",
-  "custom-speaker": "/src/assets/icons/speaker.svg",
-  "custom-switch": "/src/assets/icons/switch.svg",
-  "custom-transistor": "/src/assets/icons/transistor.svg",
-  "custom-other": "/src/assets/icons/other.svg",
+  "custom-crystal": crystalIcon,
+  "custom-capacitor": capacitorIcon,
+  "custom-connector": connectorIcon,
+  "custom-diode": diodeIcon,
+  "custom-ic": icIcon,
+  "custom-inductor": inductorIcon,
+  "custom-led": ledIcon,
+  "custom-resistor": resistorIcon,
+  "custom-resistor_var": resistorVarIcon,
+  "custom-sensor": sensorIcon,
+  "custom-speaker": speakerIcon,
+  "custom-switch": switchIcon,
+  "custom-transistor": transistorIcon,
+  "custom-other": otherIcon,
 };
 
 export function Icon({ name, size = 16, className, ...props }: IconProps) {
