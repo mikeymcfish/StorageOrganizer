@@ -1,18 +1,18 @@
 import { HTMLAttributes } from "react";
-import crystalIcon from "@assets/icons/crystal.svg";
-import capacitorIcon from "@assets/icons/capacitor.svg";
-import connectorIcon from "@assets/icons/connector.svg";
-import diodeIcon from "@assets/icons/diode.svg";
-import icIcon from "@assets/icons/ic.svg";
-import inductorIcon from "@assets/icons/inductor.svg";
-import ledIcon from "@assets/icons/led.svg";
-import resistorIcon from "@assets/icons/resistor.svg";
-import resistorVarIcon from "@assets/icons/resistor_var.svg";
-import sensorIcon from "@assets/icons/sensor.svg";
-import speakerIcon from "@assets/icons/speaker.svg";
-import switchIcon from "@assets/icons/switch.svg";
-import transistorIcon from "@assets/icons/transistor.svg";
-import otherIcon from "@assets/icons/other.svg";
+import crystalIcon from "../assets/icons/crystal.svg";
+import capacitorIcon from "../assets/icons/capacitor.svg";
+import connectorIcon from "../assets/icons/connector.svg";
+import diodeIcon from "../assets/icons/diode.svg";
+import icIcon from "../assets/icons/ic.svg";
+import inductorIcon from "../assets/icons/inductor.svg";
+import ledIcon from "../assets/icons/led.svg";
+import resistorIcon from "../assets/icons/resistor.svg";
+import resistorVarIcon from "../assets/icons/resistor_var.svg";
+import sensorIcon from "../assets/icons/sensor.svg";
+import speakerIcon from "../assets/icons/speaker.svg";
+import switchIcon from "../assets/icons/switch.svg";
+import transistorIcon from "../assets/icons/transistor.svg";
+import otherIcon from "../assets/icons/other.svg";
 
 interface IconProps extends HTMLAttributes<HTMLDivElement> {
   name: string;
