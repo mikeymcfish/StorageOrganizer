@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "name": "Arduino Uno",
+      "categoryId": 2,
+      "size": "md",
+      "quantity": 3,
+      "information": "Microcontroller boards",
+      "containerId": 1,
+      "position": { "row": 1, "column": 1 }
+    },
+    {
+      "name": "Updated Screwdriver",
+      "categoryId": 3,
+      "size": "md",
+      "quantity": 1,
+      "information": "Phillips head",
+      "containerId": 1,
+      "position": { "row": 0, "column": 1 }
+    }
+  ]
+}

@@ -262,7 +262,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Try to update existing item
             const existingItem = await storage.getItem(cleanItem.id);
             if (existingItem) {
-              await storage.updateItem(cleanItem.id, cleanItem);
+              const { id, ...itemData } = cleanItem;
+              await storage.updateItem(cleanItem.id, itemData);
               updated++;
             } else {
               // Item with this ID doesn't exist, create new one
