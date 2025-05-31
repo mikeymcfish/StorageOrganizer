@@ -51,7 +51,10 @@ export function Icon({ name, size = 16, className, ...props }: IconProps) {
           alt={name}
           width={size}
           height={size}
-          style={{ filter: "brightness(0) saturate(100%)" }}
+          style={{ 
+            filter: "brightness(0) saturate(100%) blur(0.5px)", 
+            opacity: 0.5 
+          }}
         />
       </div>
     );
