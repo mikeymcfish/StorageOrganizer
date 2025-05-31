@@ -62,7 +62,20 @@ const colorOptions = [
 
 const iconOptions = [
   // Custom SVG icons
-  { value: "custom-crystal", label: "Crystal" },
+  { value: "custom-crystal", label: "crystal" },
+  { value: "custom-capacitor", label: "capacitor" },
+  { value: "custom-connector", label: "connector" },
+  { value: "custom-diode", label: "diode" },
+  { value: "custom-ic", label: "ic" },
+  { value: "custom-inductor", label: "inductor" },
+  { value: "custom-led", label: "led" },
+  { value: "custom-resistor", label: "resistor" },
+  { value: "custom-resistor_var", label: "variable resistor" },
+  { value: "custom-sensor", label: "sensor" },
+  { value: "custom-speaker", label: "speaker" },
+  { value: "custom-switch", label: "switch" },
+  { value: "custom-transistor", label: "transistor" },
+  { value: "custom-other", label: "other" },
 ];
 
 export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
