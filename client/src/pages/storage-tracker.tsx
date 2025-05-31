@@ -12,6 +12,7 @@ export default function StorageTracker() {
   const [selectedContainerId, setSelectedContainerId] = useState<number | null>(null);
   const [itemModalOpen, setItemModalOpen] = useState(false);
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [sizeModalOpen, setSizeModalOpen] = useState(false);
   const [containerModalOpen, setContainerModalOpen] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState<{ row: number; column: number } | null>(null);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
@@ -50,6 +51,7 @@ export default function StorageTracker() {
         onContainerSelect={handleContainerSelect}
         onAddContainer={() => setContainerModalOpen(true)}
         onManageCategories={() => setCategoryModalOpen(true)}
+        onManageSizes={() => setSizeModalOpen(true)}
       />
       
       <div className="flex-1 flex flex-col">
@@ -85,6 +87,11 @@ export default function StorageTracker() {
       <CategoryModal
         open={categoryModalOpen}
         onOpenChange={setCategoryModalOpen}
+      />
+
+      <SizeModal
+        open={sizeModalOpen}
+        onOpenChange={setSizeModalOpen}
       />
 
       <ContainerModal
