@@ -1,34 +1,36 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { pgTable, text, serial, integer, real, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Storage containers table
-export const storageContainers = sqliteTable("storage_containers", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const storageContainers = pgTable("storage_containers", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
-  gridConfig: text("grid_config").notNull(),
+  gridConfig: json("grid_config").$type<{
+    rows: Array<{ columns: number; isDivider?: boolean }>;
+  }>().notNull(),
 });
 
 // Categories table
-export const categories = sqliteTable("categories", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
   color: text("color").notNull(),
   icon: text("icon"),
 });
 
 // Size options table
-export const sizeOptions = sqliteTable("size_options", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const sizeOptions = pgTable("size_options", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
   label: text("label").notNull(),
   sortOrder: integer("sort_order").default(0),
 });
 
 // Items table
-export const items = sqliteTable("items", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const items = pgTable("items", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   value: real("value"),
   categoryId: integer("category_id").references(() => categories.id),
@@ -37,7 +39,10 @@ export const items = sqliteTable("items", {
   information: text("information"),
   photo: text("photo"),
   containerId: integer("container_id").notNull().references(() => storageContainers.id),
-  position: text("position").notNull(),
+  position: json("position").$type<{
+    row: number;
+    column: number;
+  }>().notNull(),
 });
 
 // Insert schemas
