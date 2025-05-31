@@ -15,7 +15,7 @@ import {
   items,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, like, or, asc, and, isNotNull } from "drizzle-orm";
+import { eq, like, or, asc, and, isNotNull, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Storage containers
@@ -306,7 +306,6 @@ export class DatabaseStorage implements IStorage {
     .leftJoin(storageContainers, eq(items.containerId, storageContainers.id))
     .where(or(
       like(items.name, `%${query}%`),
-      and(isNotNull(items.value), like(items.value, `%${query}%`)),
       and(isNotNull(items.information), like(items.information, `%${query}%`))
     ));
 
