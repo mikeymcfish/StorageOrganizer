@@ -192,10 +192,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/search", async (req, res) => {
     try {
       const query = req.query.q as string;
+      const fields = req.query.fields as string;
       if (!query) {
         return res.status(400).json({ message: "Query parameter 'q' is required" });
       }
-      const results = await storage.searchItems(query);
+      
+      const searchFields = fields ? fields.split(',') : ['name'];
+      const results = await storage.searchItems(query, searchFields);
       res.json(results);
     } catch (error) {
       console.error("Search error:", error);

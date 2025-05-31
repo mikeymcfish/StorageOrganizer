@@ -46,7 +46,7 @@ export interface IStorage {
   createItem(item: InsertItem): Promise<Item>;
   updateItem(id: number, item: Partial<InsertItem>): Promise<Item | undefined>;
   deleteItem(id: number): Promise<boolean>;
-  searchItems(query: string): Promise<ItemSearchResult[]>;
+  searchItems(query: string, fields?: string[]): Promise<ItemSearchResult[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -77,6 +77,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteStorageContainer(id: number): Promise<boolean> {
+    // First delete all items in this container
+    await db.delete(items).where(eq(items.containerId, id));
+    
+    // Then delete the container
     const result = await db.delete(storageContainers).where(eq(storageContainers.id, id));
     return (result.rowCount || 0) > 0;
   }
@@ -281,7 +285,19 @@ export class DatabaseStorage implements IStorage {
     return (result.rowCount || 0) > 0;
   }
 
-  async searchItems(query: string): Promise<ItemSearchResult[]> {
+  async searchItems(query: string, fields: string[] = ['name']): Promise<ItemSearchResult[]> {
+    const searchConditions = [];
+    
+    if (fields.includes('name')) {
+      searchConditions.push(like(items.name, `%${query}%`));
+    }
+    if (fields.includes('information')) {
+      searchConditions.push(and(isNotNull(items.information), like(items.information, `%${query}%`)));
+    }
+    if (fields.includes('value')) {
+      searchConditions.push(and(isNotNull(items.value), sql`CAST(${items.value} AS TEXT) LIKE '%' || ${query} || '%'`));
+    }
+    
     const result = await db.select({
       id: items.id,
       name: items.name,
@@ -304,10 +320,7 @@ export class DatabaseStorage implements IStorage {
     .from(items)
     .leftJoin(categories, eq(items.categoryId, categories.id))
     .leftJoin(storageContainers, eq(items.containerId, storageContainers.id))
-    .where(or(
-      like(items.name, `%${query}%`),
-      and(isNotNull(items.information), like(items.information, `%${query}%`))
-    ));
+    .where(searchConditions.length > 0 ? or(...searchConditions) : sql`1=0`);
 
     return result.map(row => ({
       id: row.id,
