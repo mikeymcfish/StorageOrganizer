@@ -206,6 +206,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Export all data
+  app.get("/api/export", async (req, res) => {
+    try {
+      const [containers, categories, sizeOptions, items] = await Promise.all([
+        storage.getStorageContainers(),
+        storage.getCategories(),
+        storage.getSizeOptions(),
+        storage.getItems()
+      ]);
+
+      const exportData = {
+        version: "1.0",
+        exportDate: new Date().toISOString(),
+        containers,
+        categories,
+        sizeOptions,
+        items
+      };
+
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', 'attachment; filename="storage-data-export.json"');
+      res.json(exportData);
+    } catch (error) {
+      console.error("Export error:", error);
+      res.status(500).json({ error: "Failed to export data" });
+    }
+  });
+
+  // Import data
+  app.post("/api/import", async (req, res) => {
+    try {
+      const { containers, categories, sizeOptions, items } = req.body;
+
+      // Import categories first (they're referenced by items)
+      if (categories) {
+        for (const category of categories) {
+          const { id, ...categoryData } = category;
+          await storage.createCategory(categoryData);
+        }
+      }
+
+      // Import size options
+      if (sizeOptions) {
+        for (const sizeOption of sizeOptions) {
+          const { id, ...sizeData } = sizeOption;
+          await storage.createSizeOption(sizeData);
+        }
+      }
+
+      // Import containers
+      if (containers) {
+        for (const container of containers) {
+          const { id, ...containerData } = container;
+          await storage.createStorageContainer(containerData);
+        }
+      }
+
+      // Import items last (they reference containers and categories)
+      if (items) {
+        for (const item of items) {
+          const { id, ...itemData } = item;
+          await storage.createItem(itemData);
+        }
+      }
+
+      res.json({ success: true, message: "Data imported successfully" });
+    } catch (error) {
+      console.error("Import error:", error);
+      res.status(500).json({ error: "Failed to import data" });
+    }
+  });
+
   // Size Options
   app.get("/api/size-options", async (req, res) => {
     try {

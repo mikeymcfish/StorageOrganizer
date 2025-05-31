@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus, Search, Settings, ChevronRight } from "lucide-react";
+import { Plus, Search, Settings, ChevronRight, Download, Upload } from "lucide-react";
 import type { StorageContainer, ItemSearchResult } from "@shared/schema";
 
 interface StorageSidebarProps {
@@ -15,6 +15,8 @@ interface StorageSidebarProps {
   onManageSizes: () => void;
   onSearch: () => void;
   onManageContainers: () => void;
+  onExport: () => void;
+  onImport: () => void;
 }
 
 export function StorageSidebar({
@@ -26,6 +28,8 @@ export function StorageSidebar({
   onManageSizes,
   onSearch,
   onManageContainers,
+  onExport,
+  onImport,
 }: StorageSidebarProps) {
 
   return (
@@ -126,6 +130,26 @@ export function StorageSidebar({
           <Settings className="w-4 h-4 mr-2" />
           Manage Sizes
         </Button>
+        
+        <div className="border-t border-slate-200 pt-2 mt-2 space-y-2">
+          <Button
+            variant="ghost"
+            onClick={onExport}
+            className="w-full justify-start text-slate-600 hover:text-slate-900"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export Data
+          </Button>
+          
+          <Button
+            variant="ghost"
+            onClick={onImport}
+            className="w-full justify-start text-slate-600 hover:text-slate-900"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Import Data
+          </Button>
+        </div>
       </div>
     </div>
   );

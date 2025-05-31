@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 75 75">
+  <!-- Generator: Adobe Illustrator 29.5.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 141)  -->
+  <defs>
+    <style>
+      .st0 {
+        stroke-linejoin: round;
+      }
+
+      .st0, .st1 {
+        fill: none;
+        stroke: #000;
+        stroke-width: 3px;
+      }
+
+      .st1 {
+        stroke-miterlimit: 11.34;
+      }
+    </style>
+  </defs>
+  <g id="g18431">
+    <g id="g6591-4-6-6">
+      <path id="path6541-7-3-5" class="st0" d="M21.45,15.8c3.79,0,6.86,2.48,6.86,5.54h0c0,3.06-3.07,5.54-6.86,5.54"/>
+      <path id="path6566-7-0-4" class="st1" d="M12.54,15.79h8.93"/>
+      <path id="path6568-91-4-9" class="st1" d="M12.54,60.43h8.93"/>
+      <path id="path6541-8-1-4-3" class="st0" d="M21.49,26.85c3.79,0,6.86,2.48,6.86,5.54s-3.07,5.54-6.86,5.54"/>
+      <path id="path6541-9-6-9-8" class="st0" d="M21.5,37.97c3.79,0,6.86,2.48,6.86,5.54s-3.07,5.54-6.86,5.54h0"/>
+      <path id="path6541-2-6-2-9" class="st0" d="M21.46,49.35c3.79,0,6.86,2.48,6.86,5.54h0c0,3.06-3.07,5.54-6.86,5.54"/>
+    </g>
+    <g id="g6591-4-6-6-1">
+      <path id="path6541-7-3-5-8" class="st0" d="M54.26,15.8c-3.79,0-6.86,2.48-6.86,5.54h0c0,3.06,3.07,5.54,6.86,5.54"/>
+      <path id="path6566-7-0-4-3" class="st1" d="M63.17,15.79h-8.93"/>
+      <path id="path6568-91-4-9-9" class="st1" d="M63.17,60.43h-8.93"/>
+      <path id="path6541-8-1-4-3-5" class="st0" d="M54.21,26.85c-3.79,0-6.86,2.48-6.86,5.54s3.07,5.54,6.86,5.54"/>
+      <path id="path6541-9-6-9-8-7" class="st0" d="M54.2,37.97c-3.79,0-6.86,2.48-6.86,5.54s3.07,5.54,6.86,5.54h0"/>
+      <path id="path6541-2-6-2-9-0" class="st0" d="M54.24,49.35c-3.79,0-6.86,2.48-6.86,5.54h0c0,3.06,3.07,5.54,6.86,5.54"/>
+    </g>
+    <path id="path18433" class="st1" d="M35.17,19.37v41.06"/>
+    <path id="path18435" class="st1" d="M40.53,60.43V19.37"/>
+  </g>
+</svg>

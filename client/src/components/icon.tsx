@@ -8,7 +8,7 @@ interface IconProps extends HTMLAttributes<HTMLDivElement> {
 // Custom SVG icons mapping
 const customIcons: Record<string, string> = {
   "custom-crystal": "/src/assets/icons/crystal.svg",
-  // Add more custom icons here as you add SVG files
+ "custom-crystal": "/src/assets/icons/crystal.svg",
 };
 
 export function Icon({ name, size = 16, className, ...props }: IconProps) {
