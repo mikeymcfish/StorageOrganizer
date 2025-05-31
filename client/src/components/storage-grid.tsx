@@ -16,7 +16,7 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
 
   const getItemAtPosition = (row: number, column: number) => {
     return items.find(item => 
-      item.position.row === row && item.position.column === column
+      item.position?.row === row && item.position?.column === column
     );
   };
 

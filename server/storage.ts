@@ -83,7 +83,11 @@ export class MemStorage implements IStorage {
 
   async createStorageContainer(container: InsertStorageContainer): Promise<StorageContainer> {
     const id = this.currentContainerId++;
-    const newContainer: StorageContainer = { ...container, id };
+    const newContainer: StorageContainer = { 
+      ...container, 
+      id,
+      description: container.description || null
+    };
     this.storageContainers.set(id, newContainer);
     return newContainer;
   }
@@ -112,7 +116,11 @@ export class MemStorage implements IStorage {
 
   async createCategory(category: InsertCategory): Promise<Category> {
     const id = this.currentCategoryId++;
-    const newCategory: Category = { ...category, id };
+    const newCategory: Category = { 
+      ...category, 
+      id,
+      icon: category.icon || null
+    };
     this.categories.set(id, newCategory);
     return newCategory;
   }
@@ -159,7 +167,16 @@ export class MemStorage implements IStorage {
 
   async createItem(item: InsertItem): Promise<Item> {
     const id = this.currentItemId++;
-    const newItem: Item = { ...item, id };
+    const newItem: Item = { 
+      ...item, 
+      id,
+      value: item.value || null,
+      categoryId: item.categoryId || null,
+      size: item.size || null,
+      quantity: item.quantity || 1,
+      information: item.information || null,
+      photo: item.photo || null
+    };
     this.items.set(id, newItem);
     return newItem;
   }
@@ -181,7 +198,7 @@ export class MemStorage implements IStorage {
     const lowerQuery = query.toLowerCase();
     const results: ItemSearchResult[] = [];
 
-    for (const item of this.items.values()) {
+    for (const item of Array.from(this.items.values())) {
       if (item.name.toLowerCase().includes(lowerQuery) ||
           item.information?.toLowerCase().includes(lowerQuery)) {
         const container = this.storageContainers.get(item.containerId);
