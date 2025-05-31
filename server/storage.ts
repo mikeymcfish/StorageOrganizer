@@ -14,6 +14,8 @@ import {
   type ItemWithCategory,
   type ItemSearchResult
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, like, asc } from "drizzle-orm";
 
 export interface IStorage {
   // Storage containers
@@ -279,4 +281,245 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  async getStorageContainers(): Promise<StorageContainer[]> {
+    const result = await db.select().from(storageContainers);
+    return result.map(container => ({
+      ...container,
+      gridConfig: JSON.parse(container.gridConfig)
+    }));
+  }
+
+  async getStorageContainer(id: number): Promise<StorageContainer | undefined> {
+    const [result] = await db.select().from(storageContainers).where(eq(storageContainers.id, id));
+    if (!result) return undefined;
+    return {
+      ...result,
+      gridConfig: JSON.parse(result.gridConfig)
+    };
+  }
+
+  async createStorageContainer(container: InsertStorageContainer): Promise<StorageContainer> {
+    const [result] = await db.insert(storageContainers).values({
+      ...container,
+      gridConfig: JSON.stringify(container.gridConfig)
+    }).returning();
+    return {
+      ...result,
+      gridConfig: JSON.parse(result.gridConfig)
+    };
+  }
+
+  async updateStorageContainer(id: number, container: Partial<InsertStorageContainer>): Promise<StorageContainer | undefined> {
+    const updateData = container.gridConfig 
+      ? { ...container, gridConfig: JSON.stringify(container.gridConfig) }
+      : container;
+    
+    const [result] = await db.update(storageContainers)
+      .set(updateData)
+      .where(eq(storageContainers.id, id))
+      .returning();
+    
+    if (!result) return undefined;
+    return {
+      ...result,
+      gridConfig: JSON.parse(result.gridConfig)
+    };
+  }
+
+  async deleteStorageContainer(id: number): Promise<boolean> {
+    const result = await db.delete(storageContainers).where(eq(storageContainers.id, id));
+    return result.changes > 0;
+  }
+
+  async getCategories(): Promise<Category[]> {
+    return await db.select().from(categories);
+  }
+
+  async getCategory(id: number): Promise<Category | undefined> {
+    const [result] = await db.select().from(categories).where(eq(categories.id, id));
+    return result;
+  }
+
+  async createCategory(category: InsertCategory): Promise<Category> {
+    const [result] = await db.insert(categories).values(category).returning();
+    return result;
+  }
+
+  async updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category | undefined> {
+    const [result] = await db.update(categories)
+      .set(category)
+      .where(eq(categories.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteCategory(id: number): Promise<boolean> {
+    const result = await db.delete(categories).where(eq(categories.id, id));
+    return result.changes > 0;
+  }
+
+  async getSizeOptions(): Promise<SizeOption[]> {
+    return await db.select().from(sizeOptions).orderBy(asc(sizeOptions.sortOrder));
+  }
+
+  async getSizeOption(id: number): Promise<SizeOption | undefined> {
+    const [result] = await db.select().from(sizeOptions).where(eq(sizeOptions.id, id));
+    return result;
+  }
+
+  async createSizeOption(sizeOption: InsertSizeOption): Promise<SizeOption> {
+    const [result] = await db.insert(sizeOptions).values(sizeOption).returning();
+    return result;
+  }
+
+  async updateSizeOption(id: number, sizeOption: Partial<InsertSizeOption>): Promise<SizeOption | undefined> {
+    const [result] = await db.update(sizeOptions)
+      .set(sizeOption)
+      .where(eq(sizeOptions.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteSizeOption(id: number): Promise<boolean> {
+    const result = await db.delete(sizeOptions).where(eq(sizeOptions.id, id));
+    return result.changes > 0;
+  }
+
+  async getItems(): Promise<ItemWithCategory[]> {
+    const result = await db.select({
+      id: items.id,
+      name: items.name,
+      value: items.value,
+      categoryId: items.categoryId,
+      size: items.size,
+      quantity: items.quantity,
+      information: items.information,
+      photo: items.photo,
+      containerId: items.containerId,
+      position: items.position,
+      category: categories
+    })
+    .from(items)
+    .leftJoin(categories, eq(items.categoryId, categories.id));
+    
+    return result.map(row => ({
+      ...row,
+      position: JSON.parse(row.position),
+      category: row.category || undefined
+    }));
+  }
+
+  async getItemsByContainer(containerId: number): Promise<ItemWithCategory[]> {
+    const result = await db.select({
+      id: items.id,
+      name: items.name,
+      value: items.value,
+      categoryId: items.categoryId,
+      size: items.size,
+      quantity: items.quantity,
+      information: items.information,
+      photo: items.photo,
+      containerId: items.containerId,
+      position: items.position,
+      category: categories
+    })
+    .from(items)
+    .leftJoin(categories, eq(items.categoryId, categories.id))
+    .where(eq(items.containerId, containerId));
+    
+    return result.map(row => ({
+      ...row,
+      position: JSON.parse(row.position),
+      category: row.category || undefined
+    }));
+  }
+
+  async getItem(id: number): Promise<ItemWithCategory | undefined> {
+    const [result] = await db.select({
+      id: items.id,
+      name: items.name,
+      value: items.value,
+      categoryId: items.categoryId,
+      size: items.size,
+      quantity: items.quantity,
+      information: items.information,
+      photo: items.photo,
+      containerId: items.containerId,
+      position: items.position,
+      category: categories
+    })
+    .from(items)
+    .leftJoin(categories, eq(items.categoryId, categories.id))
+    .where(eq(items.id, id));
+    
+    if (!result) return undefined;
+    return {
+      ...result,
+      position: JSON.parse(result.position),
+      category: result.category || undefined
+    };
+  }
+
+  async createItem(item: InsertItem): Promise<Item> {
+    const [result] = await db.insert(items).values({
+      ...item,
+      position: JSON.stringify(item.position)
+    }).returning();
+    return {
+      ...result,
+      position: JSON.parse(result.position)
+    };
+  }
+
+  async updateItem(id: number, item: Partial<InsertItem>): Promise<Item | undefined> {
+    const updateData = item.position 
+      ? { ...item, position: JSON.stringify(item.position) }
+      : item;
+    
+    const [result] = await db.update(items)
+      .set(updateData)
+      .where(eq(items.id, id))
+      .returning();
+    
+    if (!result) return undefined;
+    return {
+      ...result,
+      position: JSON.parse(result.position)
+    };
+  }
+
+  async deleteItem(id: number): Promise<boolean> {
+    const result = await db.delete(items).where(eq(items.id, id));
+    return result.changes > 0;
+  }
+
+  async searchItems(query: string): Promise<ItemSearchResult[]> {
+    const result = await db.select({
+      id: items.id,
+      name: items.name,
+      value: items.value,
+      categoryId: items.categoryId,
+      size: items.size,
+      quantity: items.quantity,
+      information: items.information,
+      photo: items.photo,
+      containerId: items.containerId,
+      position: items.position,
+      category: categories,
+      containerName: storageContainers.name
+    })
+    .from(items)
+    .leftJoin(categories, eq(items.categoryId, categories.id))
+    .leftJoin(storageContainers, eq(items.containerId, storageContainers.id))
+    .where(like(items.name, `%${query}%`));
+    
+    return result.map(row => ({
+      ...row,
+      position: JSON.parse(row.position),
+      category: row.category || undefined
+    }));
+  }
+}
+
+export const storage = new DatabaseStorage();
