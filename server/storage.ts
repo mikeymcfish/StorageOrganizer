@@ -2,10 +2,13 @@ import {
   storageContainers, 
   categories, 
   items,
+  sizeOptions,
   type StorageContainer,
   type InsertStorageContainer,
   type Category,
   type InsertCategory,
+  type SizeOption,
+  type InsertSizeOption,
   type Item,
   type InsertItem,
   type ItemWithCategory,
@@ -27,6 +30,13 @@ export interface IStorage {
   updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category | undefined>;
   deleteCategory(id: number): Promise<boolean>;
 
+  // Size options
+  getSizeOptions(): Promise<SizeOption[]>;
+  getSizeOption(id: number): Promise<SizeOption | undefined>;
+  createSizeOption(sizeOption: InsertSizeOption): Promise<SizeOption>;
+  updateSizeOption(id: number, sizeOption: Partial<InsertSizeOption>): Promise<SizeOption | undefined>;
+  deleteSizeOption(id: number): Promise<boolean>;
+
   // Items
   getItems(): Promise<ItemWithCategory[]>;
   getItemsByContainer(containerId: number): Promise<ItemWithCategory[]>;
@@ -40,21 +50,26 @@ export interface IStorage {
 export class MemStorage implements IStorage {
   private storageContainers: Map<number, StorageContainer>;
   private categories: Map<number, Category>;
+  private sizeOptions: Map<number, SizeOption>;
   private items: Map<number, Item>;
   private currentContainerId: number;
   private currentCategoryId: number;
+  private currentSizeOptionId: number;
   private currentItemId: number;
 
   constructor() {
     this.storageContainers = new Map();
     this.categories = new Map();
+    this.sizeOptions = new Map();
     this.items = new Map();
     this.currentContainerId = 1;
     this.currentCategoryId = 1;
+    this.currentSizeOptionId = 1;
     this.currentItemId = 1;
 
-    // Initialize with default categories
+    // Initialize with default categories and sizes
     this.initializeDefaultCategories();
+    this.initializeDefaultSizes();
   }
 
   private initializeDefaultCategories() {
@@ -69,6 +84,21 @@ export class MemStorage implements IStorage {
     defaultCategories.forEach(cat => {
       const category: Category = { ...cat, id: this.currentCategoryId++ };
       this.categories.set(category.id, category);
+    });
+  }
+
+  private initializeDefaultSizes() {
+    const defaultSizes = [
+      { name: "xs", label: "Extra Small", sortOrder: 1 },
+      { name: "s", label: "Small", sortOrder: 2 },
+      { name: "m", label: "Medium", sortOrder: 3 },
+      { name: "l", label: "Large", sortOrder: 4 },
+      { name: "xl", label: "Extra Large", sortOrder: 5 },
+    ];
+
+    defaultSizes.forEach(size => {
+      const sizeOption: SizeOption = { ...size, id: this.currentSizeOptionId++ };
+      this.sizeOptions.set(sizeOption.id, sizeOption);
     });
   }
 
@@ -136,6 +166,39 @@ export class MemStorage implements IStorage {
 
   async deleteCategory(id: number): Promise<boolean> {
     return this.categories.delete(id);
+  }
+
+  // Size Options
+  async getSizeOptions(): Promise<SizeOption[]> {
+    return Array.from(this.sizeOptions.values()).sort((a, b) => a.sortOrder - b.sortOrder);
+  }
+
+  async getSizeOption(id: number): Promise<SizeOption | undefined> {
+    return this.sizeOptions.get(id);
+  }
+
+  async createSizeOption(sizeOption: InsertSizeOption): Promise<SizeOption> {
+    const id = this.currentSizeOptionId++;
+    const newSizeOption: SizeOption = { 
+      ...sizeOption, 
+      id,
+      sortOrder: sizeOption.sortOrder || 0
+    };
+    this.sizeOptions.set(id, newSizeOption);
+    return newSizeOption;
+  }
+
+  async updateSizeOption(id: number, sizeOption: Partial<InsertSizeOption>): Promise<SizeOption | undefined> {
+    const existing = this.sizeOptions.get(id);
+    if (!existing) return undefined;
+    
+    const updated: SizeOption = { ...existing, ...sizeOption };
+    this.sizeOptions.set(id, updated);
+    return updated;
+  }
+
+  async deleteSizeOption(id: number): Promise<boolean> {
+    return this.sizeOptions.delete(id);
   }
 
   // Items

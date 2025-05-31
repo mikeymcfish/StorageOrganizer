@@ -20,6 +20,14 @@ export const categories = pgTable("categories", {
   icon: text("icon"),
 });
 
+// Size options table
+export const sizeOptions = pgTable("size_options", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  label: text("label").notNull(),
+  sortOrder: integer("sort_order").default(0),
+});
+
 // Items table
 export const items = pgTable("items", {
   id: serial("id").primaryKey(),
@@ -46,6 +54,10 @@ export const insertCategorySchema = createInsertSchema(categories).omit({
   id: true,
 });
 
+export const insertSizeOptionSchema = createInsertSchema(sizeOptions).omit({
+  id: true,
+});
+
 export const insertItemSchema = createInsertSchema(items).omit({
   id: true,
 });
@@ -56,6 +68,9 @@ export type InsertStorageContainer = z.infer<typeof insertStorageContainerSchema
 
 export type Category = typeof categories.$inferSelect;
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
+
+export type SizeOption = typeof sizeOptions.$inferSelect;
+export type InsertSizeOption = z.infer<typeof insertSizeOptionSchema>;
 
 export type Item = typeof items.$inferSelect;
 export type InsertItem = z.infer<typeof insertItemSchema>;
