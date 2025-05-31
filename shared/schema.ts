@@ -1,0 +1,70 @@
+import { pgTable, text, serial, integer, real, json } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+// Storage containers table
+export const storageContainers = pgTable("storage_containers", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  gridConfig: json("grid_config").$type<{
+    rows: Array<{ columns: number; isDivider?: boolean }>;
+  }>().notNull(),
+});
+
+// Categories table
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  color: text("color").notNull(),
+  icon: text("icon"),
+});
+
+// Items table
+export const items = pgTable("items", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  value: real("value"),
+  categoryId: integer("category_id").references(() => categories.id),
+  size: text("size"),
+  quantity: integer("quantity").default(1),
+  information: text("information"),
+  photo: text("photo"),
+  containerId: integer("container_id").notNull().references(() => storageContainers.id),
+  position: json("position").$type<{
+    row: number;
+    column: number;
+  }>().notNull(),
+});
+
+// Insert schemas
+export const insertStorageContainerSchema = createInsertSchema(storageContainers).omit({
+  id: true,
+});
+
+export const insertCategorySchema = createInsertSchema(categories).omit({
+  id: true,
+});
+
+export const insertItemSchema = createInsertSchema(items).omit({
+  id: true,
+});
+
+// Types
+export type StorageContainer = typeof storageContainers.$inferSelect;
+export type InsertStorageContainer = z.infer<typeof insertStorageContainerSchema>;
+
+export type Category = typeof categories.$inferSelect;
+export type InsertCategory = z.infer<typeof insertCategorySchema>;
+
+export type Item = typeof items.$inferSelect;
+export type InsertItem = z.infer<typeof insertItemSchema>;
+
+// Extended types for joins
+export type ItemWithCategory = Item & {
+  category?: Category;
+};
+
+export type ItemSearchResult = ItemWithCategory & {
+  containerName: string;
+};
