@@ -41,9 +41,6 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold text-slate-900">{container.name}</h2>
-            <p className="text-slate-500">
-              {container.description || `${container.gridConfig.rows.length} rows with custom layout`}
-            </p>
           </div>
 
         </div>
