@@ -128,18 +128,26 @@ export function SizeModal({ open, onOpenChange }: SizeModalProps) {
     const current = sizeOptions[currentIndex];
     const target = sizeOptions[targetIndex];
 
-    // Swap sort orders
-    await updateMutation.mutateAsync({
-      name: current.name,
-      label: current.label,
-      sortOrder: target.sortOrder || 0,
-    });
+    try {
+      // Update current item with target's sort order
+      await apiRequest("PATCH", `/api/size-options/${current.id}`, {
+        name: current.name,
+        label: current.label,
+        sortOrder: target.sortOrder || 0,
+      });
 
-    await updateMutation.mutateAsync({
-      name: target.name,
-      label: target.label,
-      sortOrder: current.sortOrder || 0,
-    });
+      // Update target item with current's sort order
+      await apiRequest("PATCH", `/api/size-options/${target.id}`, {
+        name: target.name,
+        label: target.label,
+        sortOrder: current.sortOrder || 0,
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["/api/size-options"] });
+      toast({ title: "Size options reordered successfully" });
+    } catch (error) {
+      toast({ title: "Failed to reorder size options", variant: "destructive" });
+    }
   };
 
   return (
