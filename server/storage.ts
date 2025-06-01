@@ -118,7 +118,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getSizeOptions(): Promise<SizeOption[]> {
-    return await db.select().from(sizeOptions).orderBy(asc(sizeOptions.sortOrder));
+    return await db.select().from(sizeOptions).orderBy(asc(sizeOptions.name));
   }
 
   async getSizeOption(id: number): Promise<SizeOption | undefined> {
