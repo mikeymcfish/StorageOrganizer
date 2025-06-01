@@ -170,7 +170,27 @@ export function ItemModal({
                     Name <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter item name" {...field} />
+                    <div className="flex gap-1">
+                      <Input placeholder="Enter item name" {...field} className="flex-1" />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="px-2 text-xs"
+                        onClick={() => field.onChange(field.value + 'Ω')}
+                      >
+                        Ω
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="px-2 text-xs"
+                        onClick={() => field.onChange(field.value + 'μ')}
+                      >
+                        μ
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

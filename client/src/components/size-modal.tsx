@@ -250,27 +250,7 @@ export function SizeModal({ open, onOpenChange }: SizeModalProps) {
                         Name <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <div className="flex gap-1">
-                          <Input placeholder="e.g., xs, s, m, l, xl" {...field} className="flex-1" />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="px-2 text-xs"
-                            onClick={() => field.onChange(field.value + 'Ω')}
-                          >
-                            Ω
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="px-2 text-xs"
-                            onClick={() => field.onChange(field.value + 'μ')}
-                          >
-                            μ
-                          </Button>
-                        </div>
+                        <Input placeholder="e.g., xs, s, m, l, xl" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
