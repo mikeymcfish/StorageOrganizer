@@ -118,7 +118,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getSizeOptions(): Promise<SizeOption[]> {
-    return await db.select().from(sizeOptions).orderBy(asc(sizeOptions.name));
+    const results = await db.select().from(sizeOptions);
+    return results.sort((a, b) => a.name.trim().localeCompare(b.name.trim()));
   }
 
   async getSizeOption(id: number): Promise<SizeOption | undefined> {
