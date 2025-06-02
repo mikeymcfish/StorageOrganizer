@@ -79,12 +79,10 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
         >
           {gridConfig.rows.map((row, rowIndex) => 
             Array.from({ length: row.columns }, (_, colIndex) => {
-              // Handle both 0-based and 1-based position data
-              const itemRow = (item.position?.row || 0);
-              const itemCol = (item.position?.column || 0);
-              const isHighlighted = itemRow === rowIndex || itemRow === rowIndex + 1;
-              const isColHighlighted = itemCol === colIndex || itemCol === colIndex + 1;
-              const shouldHighlight = isHighlighted && isColHighlighted;
+              // The database stores 0-based positions, grid display is 0-based too
+              const itemRow = item.position?.row || 0;
+              const itemCol = item.position?.column || 0;
+              const shouldHighlight = itemRow === rowIndex && itemCol === colIndex;
               
               return (
                 <div
