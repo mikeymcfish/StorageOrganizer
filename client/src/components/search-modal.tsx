@@ -70,32 +70,31 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
     return (
       <div className="flex flex-col gap-0.5 p-2 bg-gray-50 rounded border">
         <div className="text-xs font-medium text-gray-600 mb-1">{container.name}</div>
-        <div 
-          className="grid gap-0.5"
-          style={{ 
-            gridTemplateColumns: `repeat(${maxCols}, ${cellSize}px)`,
-            width: `${maxCols * (cellSize + gap) - gap}px`
-          }}
-        >
-          {gridConfig.rows.map((row, rowIndex) => 
-            Array.from({ length: row.columns }, (_, colIndex) => {
-              // The database stores 0-based positions, grid display is 0-based too
-              const itemRow = item.position?.row || 0;
-              const itemCol = item.position?.column || 0;
-              const shouldHighlight = itemRow === rowIndex && itemCol === colIndex;
-              
-              return (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  className={`w-2 h-2 border border-gray-300 ${
-                    shouldHighlight 
-                      ? 'bg-blue-500 border-blue-600 shadow-sm' 
-                      : 'bg-white'
-                  }`}
-                />
-              );
-            })
-          )}
+        <div className="flex flex-col gap-0.5">
+          {gridConfig.rows.map((row, rowIndex) => (
+            <div 
+              key={rowIndex}
+              className="flex gap-0.5"
+            >
+              {Array.from({ length: row.columns }, (_, colIndex) => {
+                // The database stores 0-based positions, grid display is 0-based too
+                const itemRow = item.position?.row || 0;
+                const itemCol = item.position?.column || 0;
+                const shouldHighlight = itemRow === rowIndex && itemCol === colIndex;
+                
+                return (
+                  <div
+                    key={`${rowIndex}-${colIndex}`}
+                    className={`w-2 h-2 border border-gray-300 ${
+                      shouldHighlight 
+                        ? 'bg-blue-500 border-blue-600 shadow-sm' 
+                        : 'bg-white'
+                    }`}
+                  />
+                );
+              })}
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -197,9 +196,6 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
                               <div className="flex items-center gap-2">
                                 <MapPin size={14} />
                                 <span><strong>Position:</strong> Row {(item.position?.row || 0) + 1}, Column {(item.position?.column || 0) + 1}</span>
-                                <span className="text-xs text-red-500">
-                                  (DB: {item.position?.row},{item.position?.column})
-                                </span>
                               </div>
                               <p><strong>Container:</strong> {item.containerName}</p>
                               {item.size && <p><strong>Size:</strong> {item.size}</p>}
