@@ -14,9 +14,30 @@ interface StorageGridProps {
 }
 
 export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridProps) {
+  const [draggedItem, setDraggedItem] = useState<ItemWithCategory | null>(null);
+  const [dragOverPosition, setDragOverPosition] = useState<{ row: number; column: number } | null>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const { data: items = [] } = useQuery<ItemWithCategory[]>({
     queryKey: ["/api/containers", container.id, "items"],
     queryFn: () => fetch(`/api/containers/${container.id}/items`).then(res => res.json()),
+  });
+
+  const moveItemMutation = useMutation({
+    mutationFn: async ({ itemId, newPosition }: { itemId: number; newPosition: { row: number; column: number } }) => {
+      const response = await apiRequest("PATCH", `/api/items/${itemId}`, {
+        position: newPosition,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/containers", container.id, "items"] });
+      toast({ title: "Item moved successfully" });
+    },
+    onError: () => {
+      toast({ title: "Failed to move item", variant: "destructive" });
+    },
   });
 
   const getItemAtPosition = (row: number, column: number) => {
@@ -35,6 +56,47 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
       xl: "XL"
     };
     return sizeMap[size] || size;
+  };
+
+  const handleDragStart = (e: React.DragEvent, item: ItemWithCategory) => {
+    setDraggedItem(item);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent, row: number, column: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverPosition({ row, column });
+  };
+
+  const handleDragLeave = () => {
+    setDragOverPosition(null);
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetRow: number, targetColumn: number) => {
+    e.preventDefault();
+    setDragOverPosition(null);
+
+    if (!draggedItem) return;
+
+    const existingItem = getItemAtPosition(targetRow, targetColumn);
+    if (existingItem && existingItem.id !== draggedItem.id) {
+      toast({ title: "Position already occupied", variant: "destructive" });
+      setDraggedItem(null);
+      return;
+    }
+
+    if (draggedItem.position?.row === targetRow && draggedItem.position?.column === targetColumn) {
+      setDraggedItem(null);
+      return;
+    }
+
+    moveItemMutation.mutate({
+      itemId: draggedItem.id,
+      newPosition: { row: targetRow, column: targetColumn },
+    });
+
+    setDraggedItem(null);
   };
 
   return (
@@ -76,9 +138,18 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
                       return (
                         <div
                           key={`${rowIndex}-${columnIndex}`}
-                          className="storage-box p-1 cursor-pointer relative min-h-[80px] transform transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                          className={`storage-box p-1 cursor-pointer relative min-h-[80px] transform transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${
+                            draggedItem?.id === item.id ? 'opacity-50 scale-95' : ''
+                          } ${
+                            dragOverPosition?.row === rowIndex && dragOverPosition?.column === columnIndex ? 'ring-2 ring-blue-500' : ''
+                          }`}
                           style={{ backgroundColor: item.category?.color || "#64748b" }}
                           onClick={() => onEditItem(item)}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, item)}
+                          onDragOver={(e) => handleDragOver(e, rowIndex, columnIndex)}
+                          onDragLeave={handleDragLeave}
+                          onDrop={(e) => handleDrop(e, rowIndex, columnIndex)}
                         >
                           {/* Status indicators */}
                           <div className="absolute top-1 right-1 flex gap-1">
@@ -116,8 +187,13 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
                     return (
                       <div
                         key={`${rowIndex}-${columnIndex}`}
-                        className="border-2 border-dashed border-slate-300 p-3 cursor-pointer relative min-h-[80px] flex items-center justify-center hover:border-blue-600 hover:bg-blue-50 transition-all duration-200"
+                        className={`border-2 border-dashed border-slate-300 p-3 cursor-pointer relative min-h-[80px] flex items-center justify-center hover:border-blue-600 hover:bg-blue-50 transition-all duration-200 ${
+                          dragOverPosition?.row === rowIndex && dragOverPosition?.column === columnIndex ? 'border-blue-500 bg-blue-100' : ''
+                        }`}
                         onClick={() => onAddItem(rowIndex, columnIndex)}
+                        onDragOver={(e) => handleDragOver(e, rowIndex, columnIndex)}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, rowIndex, columnIndex)}
                       >
                         <div className="text-center">
                           <Plus className="w-6 h-6 text-slate-400 mb-2 mx-auto" />

@@ -160,6 +160,9 @@ export class DatabaseStorage implements IStorage {
       photo: items.photo,
       containerId: items.containerId,
       position: items.position,
+      lowQuantityThreshold: items.lowQuantityThreshold,
+      checkedOutTo: items.checkedOutTo,
+      checkedOutAt: items.checkedOutAt,
       category: {
         id: categories.id,
         name: categories.name,
@@ -180,6 +183,9 @@ export class DatabaseStorage implements IStorage {
       photo: row.photo,
       containerId: row.containerId,
       position: row.position,
+      lowQuantityThreshold: row.lowQuantityThreshold,
+      checkedOutTo: row.checkedOutTo,
+      checkedOutAt: row.checkedOutAt,
       category: (row.category?.id !== null && row.category?.id !== undefined) ? row.category : undefined,
     }));
   }
@@ -195,6 +201,9 @@ export class DatabaseStorage implements IStorage {
       photo: items.photo,
       containerId: items.containerId,
       position: items.position,
+      lowQuantityThreshold: items.lowQuantityThreshold,
+      checkedOutTo: items.checkedOutTo,
+      checkedOutAt: items.checkedOutAt,
       category: {
         id: categories.id,
         name: categories.name,
@@ -216,6 +225,9 @@ export class DatabaseStorage implements IStorage {
       photo: row.photo,
       containerId: row.containerId,
       position: row.position,
+      lowQuantityThreshold: row.lowQuantityThreshold,
+      checkedOutTo: row.checkedOutTo,
+      checkedOutAt: row.checkedOutAt,
       category: (row.category?.id !== null && row.category?.id !== undefined) ? row.category : undefined,
     }));
   }
@@ -231,6 +243,9 @@ export class DatabaseStorage implements IStorage {
       photo: items.photo,
       containerId: items.containerId,
       position: items.position,
+      lowQuantityThreshold: items.lowQuantityThreshold,
+      checkedOutTo: items.checkedOutTo,
+      checkedOutAt: items.checkedOutAt,
       category: {
         id: categories.id,
         name: categories.name,
@@ -255,6 +270,9 @@ export class DatabaseStorage implements IStorage {
       photo: row.photo,
       containerId: row.containerId,
       position: row.position,
+      lowQuantityThreshold: row.lowQuantityThreshold,
+      checkedOutTo: row.checkedOutTo,
+      checkedOutAt: row.checkedOutAt,
       category: (row.category?.id !== null && row.category?.id !== undefined) ? row.category : undefined,
     };
   }
