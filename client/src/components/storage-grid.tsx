@@ -80,21 +80,37 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
     if (!draggedItem) return;
 
     const existingItem = getItemAtPosition(targetRow, targetColumn);
-    if (existingItem && existingItem.id !== draggedItem.id) {
-      toast({ title: "Position already occupied", variant: "destructive" });
-      setDraggedItem(null);
-      return;
-    }
-
+    
     if (draggedItem.position?.row === targetRow && draggedItem.position?.column === targetColumn) {
       setDraggedItem(null);
       return;
     }
 
-    moveItemMutation.mutate({
-      itemId: draggedItem.id,
-      newPosition: { row: targetRow, column: targetColumn },
-    });
+    // If there's an existing item, swap positions
+    if (existingItem && existingItem.id !== draggedItem.id) {
+      try {
+        // Move existing item to dragged item's position
+        await apiRequest("PATCH", `/api/items/${existingItem.id}`, {
+          position: { row: draggedItem.position?.row, column: draggedItem.position?.column },
+        });
+
+        // Move dragged item to target position
+        await apiRequest("PATCH", `/api/items/${draggedItem.id}`, {
+          position: { row: targetRow, column: targetColumn },
+        });
+
+        queryClient.invalidateQueries({ queryKey: ["/api/containers", container.id, "items"] });
+        toast({ title: "Items swapped successfully" });
+      } catch (error) {
+        toast({ title: "Failed to swap items", variant: "destructive" });
+      }
+    } else {
+      // Move to empty position
+      moveItemMutation.mutate({
+        itemId: draggedItem.id,
+        newPosition: { row: targetRow, column: targetColumn },
+      });
+    }
 
     setDraggedItem(null);
   };

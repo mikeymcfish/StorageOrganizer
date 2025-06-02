@@ -17,7 +17,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   categoryId: z.number().optional(),
   size: z.string().optional(),
-  quantity: z.number().min(1).default(1),
+  quantity: z.number().min(0).default(1),
   information: z.string().optional(),
   lowQuantityThreshold: z.number().min(0).optional(),
   checkedOutTo: z.string().optional(),
@@ -285,10 +285,10 @@ export function ItemModal({
                   <FormControl>
                     <Input
                       type="number"
-                      min="1"
+                      min="0"
                       placeholder="1"
                       {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                     />
                   </FormControl>
                   <FormMessage />
