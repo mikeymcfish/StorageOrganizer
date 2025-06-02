@@ -49,6 +49,30 @@ export default function StorageTracker() {
     setItemModalOpen(true);
   };
 
+  const handleSearchItemClick = (searchResult: any) => {
+    // Find the full item data
+    const item = {
+      id: searchResult.id,
+      name: searchResult.name,
+      categoryId: searchResult.categoryId,
+      size: searchResult.size,
+      quantity: searchResult.quantity,
+      information: searchResult.information,
+      photo: searchResult.photo,
+      containerId: searchResult.containerId,
+      position: searchResult.position,
+      lowQuantityThreshold: searchResult.lowQuantityThreshold,
+      checkedOutTo: searchResult.checkedOutTo,
+      checkedOutAt: searchResult.checkedOutAt
+    };
+    
+    // Set the container to show the item
+    setSelectedContainerId(searchResult.containerId);
+    
+    // Open the item modal for editing/checkout
+    handleEditItem(item);
+  };
+
   const handleContainerSelect = (containerId: number) => {
     setSelectedContainerId(containerId);
   };
@@ -218,6 +242,7 @@ export default function StorageTracker() {
       <SearchModal
         open={searchModalOpen}
         onOpenChange={setSearchModalOpen}
+        onItemClick={handleSearchItemClick}
       />
 
       <ContainerManagementModal

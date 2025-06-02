@@ -8,16 +8,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Search, X } from "lucide-react";
+import { Search, X, MapPin } from "lucide-react";
 import { Icon } from "@/components/icon";
-import type { ItemSearchResult } from "@shared/schema";
+import type { ItemSearchResult, StorageContainer } from "@shared/schema";
 
 interface SearchModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onItemClick: (item: ItemSearchResult) => void;
 }
 
-export function SearchModal({ open, onOpenChange }: SearchModalProps) {
+export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFields, setSearchFields] = useState<string[]>(["name"]);
 
@@ -35,6 +36,10 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
     },
   });
 
+  const { data: containers = [] } = useQuery<StorageContainer[]>({
+    queryKey: ["/api/containers"],
+  });
+
   const handleFieldChange = (field: string, checked: boolean) => {
     if (checked) {
       setSearchFields([...searchFields, field]);
@@ -46,6 +51,50 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
   const handleClose = () => {
     setSearchQuery("");
     onOpenChange(false);
+  };
+
+  const handleItemClick = (item: ItemSearchResult) => {
+    onItemClick(item);
+    handleClose();
+  };
+
+  const getContainerThumbnail = (item: ItemSearchResult) => {
+    const container = containers.find(c => c.name === item.containerName);
+    if (!container) return null;
+
+    const gridConfig = container.gridConfig;
+    const maxCols = Math.max(...gridConfig.rows.map(row => row.columns));
+    const cellSize = 8; // Small cells for thumbnail
+    const gap = 1;
+
+    return (
+      <div className="flex flex-col gap-0.5 p-2 bg-gray-50 rounded border">
+        <div className="text-xs font-medium text-gray-600 mb-1">{container.name}</div>
+        <div 
+          className="grid gap-0.5"
+          style={{ 
+            gridTemplateColumns: `repeat(${maxCols}, ${cellSize}px)`,
+            width: `${maxCols * (cellSize + gap) - gap}px`
+          }}
+        >
+          {gridConfig.rows.map((row, rowIndex) => 
+            Array.from({ length: row.columns }, (_, colIndex) => {
+              const isHighlighted = item.position.row === rowIndex + 1 && item.position.column === colIndex + 1;
+              return (
+                <div
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`w-2 h-2 border border-gray-300 ${
+                    isHighlighted 
+                      ? 'bg-blue-500 border-blue-600 shadow-sm' 
+                      : 'bg-white'
+                  }`}
+                />
+              );
+            })
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -119,9 +168,9 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
               <ScrollArea className="h-[400px]">
                 <div className="space-y-2">
                   {searchResults.map((item) => (
-                    <Card key={item.id} className="hover:bg-gray-50">
+                    <Card key={item.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleItemClick(item)}>
                       <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
+                        <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
                               {item.category?.icon && (
@@ -141,13 +190,21 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                             </div>
                             
                             <div className="text-sm text-gray-600 space-y-1">
+                              <div className="flex items-center gap-2">
+                                <MapPin size={14} />
+                                <span><strong>Position:</strong> Row {item.position.row}, Column {item.position.column}</span>
+                              </div>
                               <p><strong>Container:</strong> {item.containerName}</p>
                               {item.size && <p><strong>Size:</strong> {item.size}</p>}
-                              {item.quantity && <p><strong>Quantity:</strong> {item.quantity}</p>}
+                              {item.quantity !== null && <p><strong>Quantity:</strong> {item.quantity}</p>}
                               {item.information && (
                                 <p><strong>Info:</strong> {item.information}</p>
                               )}
                             </div>
+                          </div>
+                          
+                          <div className="flex-shrink-0">
+                            {getContainerThumbnail(item)}
                           </div>
                         </div>
                       </CardContent>
