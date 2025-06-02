@@ -67,10 +67,6 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
     const cellSize = 8; // Small cells for thumbnail
     const gap = 1;
 
-    // Debug logging
-    console.log('Item position:', item.position);
-    console.log('Container:', container.name);
-
     return (
       <div className="flex flex-col gap-0.5 p-2 bg-gray-50 rounded border">
         <div className="text-xs font-medium text-gray-600 mb-1">{container.name}</div>
@@ -83,11 +79,11 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
         >
           {gridConfig.rows.map((row, rowIndex) => 
             Array.from({ length: row.columns }, (_, colIndex) => {
-              const isHighlighted = item.position?.row === rowIndex + 1 && item.position?.column === colIndex + 1;
-              // Debug logging for highlighted cells
-              if (isHighlighted) {
-                console.log(`Highlighting cell at grid[${rowIndex}][${colIndex}] for item at row ${item.position?.row}, col ${item.position?.column}`);
-              }
+              // Convert to 1-based indexing to match database storage
+              const gridRow = rowIndex + 1;
+              const gridCol = colIndex + 1;
+              const isHighlighted = item.position?.row === gridRow && item.position?.column === gridCol;
+              
               return (
                 <div
                   key={`${rowIndex}-${colIndex}`}
