@@ -12,6 +12,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(containers);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch containers" });
+	  console.error(error);
     }
   });
 
