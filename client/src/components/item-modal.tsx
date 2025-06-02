@@ -19,6 +19,8 @@ const formSchema = z.object({
   size: z.string().optional(),
   quantity: z.number().min(1).default(1),
   information: z.string().optional(),
+  lowQuantityThreshold: z.number().min(0).optional(),
+  checkedOutTo: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -55,6 +57,8 @@ export function ItemModal({
       size: "",
       quantity: 1,
       information: "",
+      lowQuantityThreshold: undefined,
+      checkedOutTo: "",
     },
   });
 
@@ -66,6 +70,8 @@ export function ItemModal({
         size: editingItem.size || "",
         quantity: editingItem.quantity || 1,
         information: editingItem.information || "",
+        lowQuantityThreshold: editingItem.lowQuantityThreshold || undefined,
+        checkedOutTo: editingItem.checkedOutTo || "",
       });
     } else {
       form.reset({
@@ -74,6 +80,8 @@ export function ItemModal({
         size: "",
         quantity: 1,
         information: "",
+        lowQuantityThreshold: undefined,
+        checkedOutTo: "",
       });
     }
   }, [editingItem, form]);
@@ -269,6 +277,43 @@ export function ItemModal({
                       placeholder="1"
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="lowQuantityThreshold"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Low Quantity Alert</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min="0"
+                      placeholder="Set warning threshold (optional)"
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="checkedOutTo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Checked Out To</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Person's name (if checked out)"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
