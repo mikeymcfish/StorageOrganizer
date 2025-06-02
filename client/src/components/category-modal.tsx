@@ -274,37 +274,22 @@ export function CategoryModal({ open, onOpenChange }: CategoryModalProps) {
                           <HelpCircle className="h-4 w-4" />
                         </Button>
                       </div>
-                      <Select
-                        value={field.value || ""}
-                        onValueChange={field.onChange}
-                      >
+                      <div className="flex items-center gap-2">
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select an icon">
-                              {field.value && (
-                                <div className="flex items-center gap-2">
-                                  <Icon name={field.value} size={16} />
-                                  {
-                                    iconOptions.find(
-                                      (i) => i.value === field.value,
-                                    )?.label
-                                  }
-                                </div>
-                              )}
-                            </SelectValue>
-                          </SelectTrigger>
+                          <Input 
+                            placeholder="e.g. brush, microchip, circuit-board"
+                            {...field}
+                          />
                         </FormControl>
-                        <SelectContent>
-                          {iconOptions.map((icon) => (
-                            <SelectItem key={icon.value} value={icon.value}>
-                              <div className="flex items-center gap-2">
-                                <Icon name={icon.value} size={16} />
-                                {icon.label}
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {field.value && (
+                          <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded border">
+                            <Icon name={field.value} size={16} />
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Enter any Font Awesome icon name (without "fa-" prefix)
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
