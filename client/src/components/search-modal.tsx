@@ -196,7 +196,7 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
                             <div className="text-sm text-gray-600 space-y-1">
                               <div className="flex items-center gap-2">
                                 <MapPin size={14} />
-                                <span><strong>Position:</strong> Row {item.position.row}, Column {item.position.column}</span>
+                                <span><strong>Position:</strong> Row {(item.position?.row || 0) + (item.position?.row === 0 ? 1 : 0)}, Column {(item.position?.column || 0) + (item.position?.column === 0 ? 1 : 0)}</span>
                               </div>
                               <p><strong>Container:</strong> {item.containerName}</p>
                               {item.size && <p><strong>Size:</strong> {item.size}</p>}
