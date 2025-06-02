@@ -1,8 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Settings, Plus } from "lucide-react";
 import type { StorageContainer, ItemWithCategory } from "@shared/schema";
 import { Icon } from "@/components/icon";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 interface StorageGridProps {
   container: StorageContainer;
@@ -77,6 +80,16 @@ export function StorageGrid({ container, onAddItem, onEditItem }: StorageGridPro
                           style={{ backgroundColor: item.category?.color || "#64748b" }}
                           onClick={() => onEditItem(item)}
                         >
+                          {/* Status indicators */}
+                          <div className="absolute top-1 right-1 flex gap-1">
+                            {item.checkedOutTo && (
+                              <div className="w-3 h-3 bg-orange-500 rounded-full border border-white shadow-sm" title={`Checked out to: ${item.checkedOutTo}`} />
+                            )}
+                            {item.lowQuantityThreshold && item.quantity !== null && item.quantity !== undefined && item.quantity <= item.lowQuantityThreshold && (
+                              <div className="w-3 h-3 bg-red-500 rounded-full border border-white shadow-sm" title={`Low quantity: ${item.quantity}/${item.lowQuantityThreshold}`} />
+                            )}
+                          </div>
+
                           <div className="absolute top-1 left-1">
                             <h4 className="font-medium text-white text-xs mb-0 line-clamp-2 leading-tight">
                               {item.name}

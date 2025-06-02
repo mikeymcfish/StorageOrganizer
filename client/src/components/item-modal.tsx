@@ -158,6 +158,18 @@ export function ItemModal({
     }
   };
 
+  const handleReturn = () => {
+    if (editingItem) {
+      form.setValue("checkedOutTo", "");
+      const formData = form.getValues();
+      updateMutation.mutate({
+        ...formData,
+        checkedOutTo: null,
+        checkedOutAt: null,
+      });
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
@@ -349,6 +361,18 @@ export function ItemModal({
               >
                 Cancel
               </Button>
+              
+              {editingItem && editingItem.checkedOutTo && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="bg-orange-100 text-orange-700 hover:bg-orange-200"
+                  onClick={handleReturn}
+                  disabled={updateMutation.isPending}
+                >
+                  Return
+                </Button>
+              )}
               
               {editingItem && (
                 <Button
