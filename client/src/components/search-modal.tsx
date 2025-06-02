@@ -79,12 +79,16 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
         >
           {gridConfig.rows.map((row, rowIndex) => 
             Array.from({ length: row.columns }, (_, colIndex) => {
-              const isHighlighted = item.position.row === rowIndex + 1 && item.position.column === colIndex + 1;
+              // The database stores 0-based positions, grid display is 0-based too
+              const itemRow = item.position?.row || 0;
+              const itemCol = item.position?.column || 0;
+              const shouldHighlight = itemRow === rowIndex && itemCol === colIndex;
+              
               return (
                 <div
                   key={`${rowIndex}-${colIndex}`}
                   className={`w-2 h-2 border border-gray-300 ${
-                    isHighlighted 
+                    shouldHighlight 
                       ? 'bg-blue-500 border-blue-600 shadow-sm' 
                       : 'bg-white'
                   }`}
@@ -192,7 +196,7 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
                             <div className="text-sm text-gray-600 space-y-1">
                               <div className="flex items-center gap-2">
                                 <MapPin size={14} />
-                                <span><strong>Position:</strong> Row {item.position.row}, Column {item.position.column}</span>
+                                <span><strong>Position:</strong> Row {(item.position?.row || 0) + 1}, Column {(item.position?.column || 0) + 1}</span>
                               </div>
                               <p><strong>Container:</strong> {item.containerName}</p>
                               {item.size && <p><strong>Size:</strong> {item.size}</p>}
