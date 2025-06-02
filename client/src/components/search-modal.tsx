@@ -79,7 +79,7 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
         >
           {gridConfig.rows.map((row, rowIndex) => 
             Array.from({ length: row.columns }, (_, colIndex) => {
-              const isHighlighted = item.position.row === rowIndex + 1 && item.position.column === colIndex + 1;
+              const isHighlighted = item.position?.row === rowIndex + 1 && item.position?.column === colIndex + 1;
               return (
                 <div
                   key={`${rowIndex}-${colIndex}`}
