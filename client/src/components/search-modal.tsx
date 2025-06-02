@@ -63,38 +63,50 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
     if (!container) return null;
 
     const gridConfig = container.gridConfig;
-    const maxCols = Math.max(...gridConfig.rows.map(row => row.columns));
     const cellSize = 8; // Small cells for thumbnail
-    const gap = 1;
+    
+    // Count only non-divider rows for position mapping
+    let actualRowIndex = 0;
 
     return (
       <div className="flex flex-col gap-0.5 p-2 bg-gray-50 rounded border">
         <div className="text-xs font-medium text-gray-600 mb-1">{container.name}</div>
         <div className="flex flex-col gap-0.5">
-          {gridConfig.rows.map((row, rowIndex) => (
-            <div 
-              key={rowIndex}
-              className="flex gap-0.5"
-            >
-              {Array.from({ length: row.columns }, (_, colIndex) => {
-                // The database stores 0-based positions, grid display is 0-based too
-                const itemRow = item.position?.row || 0;
-                const itemCol = item.position?.column || 0;
-                const shouldHighlight = itemRow === rowIndex && itemCol === colIndex;
-                
-                return (
-                  <div
-                    key={`${rowIndex}-${colIndex}`}
-                    className={`w-2 h-2 border border-gray-300 ${
-                      shouldHighlight 
-                        ? 'bg-blue-500 border-blue-600 shadow-sm' 
-                        : 'bg-white'
-                    }`}
-                  />
-                );
-              })}
-            </div>
-          ))}
+          {gridConfig.rows.map((row, rowIndex) => {
+            if (row.isDivider) {
+              return (
+                <div key={`divider-${rowIndex}`} className="h-0.5 bg-gray-300 my-0.5" />
+              );
+            }
+            
+            const currentActualRow = actualRowIndex;
+            actualRowIndex++;
+            
+            return (
+              <div 
+                key={rowIndex}
+                className="flex gap-0.5"
+              >
+                {Array.from({ length: row.columns }, (_, colIndex) => {
+                  // The database stores positions based on actual storage rows (excluding dividers)
+                  const itemRow = item.position?.row || 0;
+                  const itemCol = item.position?.column || 0;
+                  const shouldHighlight = itemRow === currentActualRow && itemCol === colIndex;
+                  
+                  return (
+                    <div
+                      key={`${rowIndex}-${colIndex}`}
+                      className={`w-2 h-2 border border-gray-300 ${
+                        shouldHighlight 
+                          ? 'bg-blue-500 border-blue-600 shadow-sm' 
+                          : 'bg-white'
+                      }`}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
       </div>
     );
