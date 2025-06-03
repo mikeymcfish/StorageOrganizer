@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus, Search, Settings, ChevronRight, Download, Upload } from "lucide-react";
+import { Plus, Search, Settings, ChevronRight, Download, Upload, Map } from "lucide-react";
+import { Link } from "wouter";
 import type { StorageContainer, ItemSearchResult } from "@shared/schema";
 
 interface StorageSidebarProps {
@@ -52,6 +53,16 @@ export function StorageSidebar({
             <Search className="w-4 h-4 mr-2" />
             Search Items
           </Button>
+          
+          <Link href="/floorplan">
+            <Button 
+              variant="outline" 
+              className="w-full"
+            >
+              <Map className="w-4 h-4 mr-2" />
+              Container Floorplan
+            </Button>
+          </Link>
           
           <Button 
             onClick={onManageContainers} 

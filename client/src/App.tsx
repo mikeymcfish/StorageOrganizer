@@ -4,12 +4,14 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import StorageTracker from "@/pages/storage-tracker";
+import Floorplan from "@/pages/floorplan";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={StorageTracker} />
+      <Route path="/floorplan" component={Floorplan} />
       <Route component={NotFound} />
     </Switch>
   );
