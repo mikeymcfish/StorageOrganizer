@@ -112,6 +112,64 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
     );
   };
 
+  const getFloorplanThumbnail = (item: ItemSearchResult) => {
+    // Load saved container positions
+    const savedPositions = localStorage.getItem('containerPositions');
+    let containerPositions: any[] = [];
+    
+    if (savedPositions) {
+      try {
+        containerPositions = JSON.parse(savedPositions);
+      } catch (e) {
+        containerPositions = [];
+      }
+    }
+
+    const getContainerPosition = (containerId: number) => {
+      const existing = containerPositions.find(p => p.id === containerId);
+      if (existing) return { x: existing.x, y: existing.y };
+      
+      const index = containers.findIndex(c => c.id === containerId);
+      const cols = 4;
+      const spacing = 200;
+      return {
+        x: (index % cols) * spacing + 50,
+        y: Math.floor(index / cols) * spacing + 50
+      };
+    };
+
+    return (
+      <div className="flex flex-col gap-0.5 p-2 bg-gray-50 rounded border">
+        <div className="text-xs font-medium text-gray-600 mb-1">Floorplan</div>
+        <div 
+          className="relative bg-white border rounded"
+          style={{ width: '120px', height: '80px' }}
+        >
+          {containers.map((container) => {
+            const position = getContainerPosition(container.id);
+            const isHighlighted = container.name === item.containerName;
+            
+            return (
+              <div
+                key={container.id}
+                className={`absolute w-4 h-3 rounded border ${
+                  isHighlighted 
+                    ? 'bg-blue-500 border-blue-600' 
+                    : 'bg-gray-200 border-gray-300'
+                }`}
+                style={{
+                  left: `${Math.min(95, (position.x / 1200) * 100)}%`,
+                  top: `${Math.min(85, (position.y / 800) * 100)}%`,
+                }}
+                title={container.name}
+              />
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh]">
@@ -218,8 +276,9 @@ export function SearchModal({ open, onOpenChange, onItemClick }: SearchModalProp
                             </div>
                           </div>
                           
-                          <div className="flex-shrink-0">
+                          <div className="flex-shrink-0 flex gap-2">
                             {getContainerThumbnail(item)}
+                            {getFloorplanThumbnail(item)}
                           </div>
                         </div>
                       </CardContent>

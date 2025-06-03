@@ -4,7 +4,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { RotateCcw, Save } from "lucide-react";
+import { RotateCcw, Save, ArrowLeft } from "lucide-react";
+import { Link } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import type { StorageContainer } from "@shared/schema";
 
@@ -106,9 +107,17 @@ export default function Floorplan() {
       {/* Header */}
       <div className="bg-white border-b border-slate-200 p-4">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-slate-900">Container Floorplan</h1>
-            <p className="text-slate-500">Drag containers to organize your storage layout</p>
+          <div className="flex items-center gap-4">
+            <Link href="/">
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Storage
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-2xl font-semibold text-slate-900">Container Floorplan</h1>
+              <p className="text-slate-500">Drag containers to organize your storage layout</p>
+            </div>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={resetLayout}>
